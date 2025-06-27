@@ -1,75 +1,169 @@
 # 🏨 Online Hotel Reservation System (OHRS)
 
-> A full-stack web application that streamlines hotel bookings with real-time availability, secure authentication, and admin control.
+<div align="center">
+
+![Version](https://img.shields.io/badge/version-1.0.0-blue.svg?cacheSeconds=2592000)
+![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)
+![License](https://img.shields.io/badge/license-MIT-green.svg)
+![React](https://img.shields.io/badge/React-18+-61DAFB.svg?logo=react)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.0+-6DB33F.svg?logo=spring)
+
+**A modern, full-stack web application that streamlines hotel bookings with real-time availability, secure authentication, and comprehensive admin control.**
+
+[📖 Documentation](#-project-overview) • [🚀 Features](#-features) • [⚡ Quick Start](#-quick-start) • [👥 Team](#-the-developers)
+
+</div>
 
 ---
 
-## 📌 Project Overview
+## 🎯 Project Overview
 
-The **Online Hotel Reservation System (OHRS)** allows users to search, filter, and book hotel rooms online. It features real-time room availability, digital receipts, and supports multiple payment methods. An intuitive **Admin Dashboard** empowers hotel staff to manage rooms, bookings, and payments securely.
+> **OHRS** revolutionizes the hotel booking experience by providing a seamless, secure, and feature-rich platform for both guests and hotel administrators.
 
-Built with **modern web technologies**, OHRS ensures a seamless experience for both guests and hotel staff, with secure login options via **Google OAuth** or custom credentials.
+### What makes OHRS special?
 
----
-
-## 🚀 Features
-
-### 👥 User Authentication
-- 🔐 **Login & Registration** via Google OAuth and email-password  
-- 🔑 **Role-Based Access Control** for Guests and Admins
-
-### 🔎 Booking Functionality
-- 🏷️ **Room Search & Filter** by:
-  - Date
-  - Room Type
-  - Capacity
-  - Price
-- 📆 **Real-Time Availability Checks** (no double bookings)
-- 🧾 **E-Receipts** and **Unique Booking Codes** after successful booking
-
-### 💳 Payment Options
-- 📱 E-wallet QR Integration (e.g., **GCash**, **Maya**)
-- 💵 **Cash Payment**
-- 🏦 **Banking Options**
-
-### 🛠️ Admin Features
-- 📋 **Admin Dashboard** to manage:
-  - Rooms
-  - Bookings
-  - Payments
-- ✉️ **Email & In-App Notifications** on booking confirmation and updates
-
-### 🌐 Developer Tools
-- ⚙️ **RESTful API** with full documentation via **Swagger**
+- 🔄 **Real-time availability** - Never worry about double bookings again
+- 🛡️ **Enterprise-grade security** - Google OAuth integration and role-based access
+- 💎 **Modern UI/UX** - Intuitive design that works on all devices
+- ⚡ **Lightning fast** - Optimized performance for the best user experience
+- 🔧 **Admin-friendly** - Comprehensive dashboard for hotel management
 
 ---
 
-## 📸 Screenshots
+## ✨ Features
 
-<!-- Add screenshots or UI previews here -->
-<!-- Example:
-![Home Page](screenshots/home.png)
-![Admin Dashboard](screenshots/dashboard.png)
--->
+<table>
+<tr>
+<td width="50%">
+
+### 🔐 **Authentication & Security**
+- **Google OAuth 2.0 Integration**
+- **Email/Password Registration**
+- **Role-Based Access Control**
+- **Secure Session Management**
+
+### 🏨 **Booking Experience**
+- **Advanced Search & Filtering**
+  - 📅 Date range selection
+  - 🛏️ Room type preferences
+  - 👥 Guest capacity options
+  - 💰 Price range filters
+- **Real-Time Availability**
+- **Instant Booking Confirmation**
+- **Digital Receipt Generation**
+
+</td>
+<td width="50%">
+
+### 💳 **Payment Solutions**
+- **📱 E-Wallet Integration**
+  - GCash QR payments
+  - Maya digital wallet
+- **💵 Cash Payment Options**
+- **🏦 Banking Integration**
+- **Secure Transaction Processing**
+
+### 🛠️ **Admin Dashboard**
+- **📊 Analytics & Reporting**
+- **🏨 Room Management**
+- **📋 Booking Administration**
+- **💰 Payment Tracking**
+- **📧 Automated Notifications**
+
+</td>
+</tr>
+</table>
 
 ---
 
-## 📁 Technologies Used
+## 🛠️ Tech Stack
 
-- **Frontend:** React
-- **Backend:** Spring Boot
-- **Database:** MySQL
-- **Authentication:** Google OAuth 2.0
-- **API Docs:** Swagger
+<div align="center">
+
+| Category | Technologies |
+|----------|-------------|
+| **Frontend** | ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB) |
+| **Backend** | ![Spring Boot](https://img.shields.io/badge/Spring_Boot-F2F4F9?style=for-the-badge&logo=spring-boot) |
+| **Database** | ![MySQL](https://img.shields.io/badge/MySQL-005C84?style=for-the-badge&logo=mysql&logoColor=white) |
+| **Authentication** | ![Google OAuth](https://img.shields.io/badge/Google_OAuth-4285F4?style=for-the-badge&logo=google&logoColor=white) |
+| **Documentation** | ![Swagger](https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=black) |
+
+</div>
+
+---
+
+## ⚡ Quick Start
+
+```bash
+# Clone the repository
+git clone https://github.com/Kenneth-devv/IT342-Online-Hotel-Reservation.git
+
+# Navigate to project directory
+cd IT342-Online-Hotel-Reservation/frontend
+
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+```
 
 ---
 
-## 🧑‍💻 The Developers
+## 📸 Preview
 
-| Name                    | Role                                |
-| ----------------------- | ----------------------------------- |
-| Kieth Jan T. Ambos      | Project Lead / Backend Developer    |
-| Bryle Anthony G. Dinapo | Frontend Developer & UI/UX Designer |
-| Aldrin R. Mangubat      | Frontend Developer & UI/UX Designer |
+<div align="center">
+
+<!-- Placeholder for screenshots -->
+*🎨 Screenshots coming soon! Stay tuned for visual previews of our beautiful interface.*
+
+</div>
 
 ---
+
+## 🌟 API Documentation
+
+Our RESTful API is fully documented and interactive:
+
+- 📖 **Swagger UI**: `/api/docs`
+- 🔗 **API Endpoints**: Comprehensive documentation available
+- 🧪 **Testing**: Built-in API testing interface
+
+---
+
+## 👥 The Developers
+
+<div align="center">
+
+<table>
+<tr>
+<td align="center">
+<img src="https://github.com/identicons/1.png" width="100px;" alt="Kieth Jan T. Ambos"/><br />
+<sub><b>Kieth Jan T. Ambos</b></sub><br />
+<i>🚀 Project Lead & Backend Developer</i><br />
+<a href="https://github.com/Kenneth-devv">📧 Contact</a>
+</td>
+<td align="center">
+<img src="https://github.com/identicons/2.png" width="100px;" alt="Bryle Anthony G. Dinapo"/><br />
+<sub><b>Bryle Anthony G. Dinapo</b></sub><br />
+<i>🎨 Frontend Developer & UI/UX Designer</i><br />
+<a href="https://github.com/Shepaks123">📧 Contact</a>
+</td>
+<td align="center">
+<img src="https://github.com/identicons/3.png" width="100px;" alt="Aldrin R. Mangubat"/><br />
+<sub><b>Aldrin R. Mangubat</b></sub><br />
+<i>🎨 Frontend Developer & UI/UX Designer</i><br />
+<a href="https://github.com/drN-n">📧 Contact</a>
+</td>
+</tr>
+</table>
+
+</div>
+
+---
+
+<div align="center">
+
+**Made with ❤️ by the OHRS Team**
+
+</div>
