@@ -1,35 +1,45 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState } from 'react';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 
-function App() {
-  const [count, setCount] = useState(0)
+const App = () => {
+  const [showAuthModal, setShowAuthModal] = useState(true); // Show by default for now
+  const [authMode, setAuthMode] = useState('login'); // 'login' or 'register'
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      {showAuthModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-0 w-96 max-w-md overflow-hidden">
+            <div className="flex justify-between items-center p-6 border-b">
+              <h2 className="text-2xl font-bold">
+                {authMode === 'login' ? 'Login' : 'Register'}
+              </h2>
+              <button
+                onClick={() => setShowAuthModal(false)}
+                className="text-gray-500 hover:text-gray-700 text-2xl"
+              >
+                ×
+              </button>
+            </div>
+            <div className="p-6">
+              {authMode === 'login' ? (
+                <LoginPage
+                  onClose={() => setShowAuthModal(false)}
+                  onSwitchToRegister={() => setAuthMode('register')}
+                />
+              ) : (
+                <RegisterPage
+                  onClose={() => setShowAuthModal(false)}
+                  onSwitchToLogin={() => setAuthMode('login')}
+                />
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
-export default App
+export default App;
