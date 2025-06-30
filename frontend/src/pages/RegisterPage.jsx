@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, User, Phone, ArrowRight, Home, Check } from 'lucide-react';
 import "../styles/Login.css";
+import { useNavigate } from 'react-router-dom';
 
 const RegisterPage = ({ onSwitchToLogin }) => {  // Receive the prop for switching to login
   const [formData, setFormData] = useState({
@@ -16,6 +17,8 @@ const RegisterPage = ({ onSwitchToLogin }) => {  // Receive the prop for switchi
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [acceptTerms, setAcceptTerms] = useState(false);
+  
+  const navigate = useNavigate(); // Add this line
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -82,10 +85,22 @@ const RegisterPage = ({ onSwitchToLogin }) => {  // Receive the prop for switchi
     setIsLoading(true);
     
     try {
+      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 2000));
       console.log('Registration submitted:', formData);
+      
+      // Success! Now redirect to login
+      // Option 1: If using the prop function
+      if (onSwitchToLogin) {
+        onSwitchToLogin();
+      } else {
+        // Option 2: If using React Router navigation
+        navigate('/login');
+      }
+      
     } catch (error) {
       console.error('Registration error:', error);
+      // Handle registration error here
     } finally {
       setIsLoading(false);
     }
