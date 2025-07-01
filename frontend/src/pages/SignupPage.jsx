@@ -83,36 +83,61 @@ const SignupPage = () => {
     return newErrors;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent default form submission behavior
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  const validationErrors = validateForm();
 
-    const validationErrors = validateForm(); // Validate the form
+  if (Object.keys(validationErrors).length > 0) {
+    setErrors(validationErrors);
+    return;
+  }
 
-    // If there are validation errors, update the errors state and stop submission
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
+  setIsLoading(true);
 
-    setIsLoading(true); // Set loading state to true
+  try {
+    const response = await fetch('http://localhost:8080/api/auth/signup', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        username: formData.email, // Using email as username
+        password: formData.password,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phone: formData.phone
+      }),
+      credentials: 'include'
+    });
 
-    try {
-      // Simulate an asynchronous registration API call
-      await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate network delay
-      console.log('Registration submitted:', formData);
-      // Make an API call here (e.g., fetch, axios)
-      // await registerUser(formData); // Pass all form data
+    const data = await response.json();
 
-      // Redirect to login page after successful registration
-      navigate('/login');
-    } catch (error) {
-      console.error('Registration error:', error);
-      // Set a general error or specific field errors based on API response
-      setErrors(prev => ({ ...prev, general: 'Registration failed. Please try again.' }));
-    } finally {
-      setIsLoading(false); // Reset loading state
-    }
-  };
+    if (!response.ok) {
+  if (data.message.includes("Email is already in use")) {
+    setErrors(prev => ({ ...prev, email: "Email is already in use" }));
+  } else if (data.message.includes("Username is already taken")) {
+    setErrors(prev => ({ ...prev, email: "This email is already registered" }));
+  } else {
+    setErrors(prev => ({ ...prev, general: data.message || "Registration failed" }));
+  }
+  return;
+}
+    // Redirect to login page after successful registration
+    navigate('/login', { 
+      state: { 
+        registrationSuccess: true,
+        message: 'Registration successful! Please log in.' 
+      } 
+    });
+
+  } catch (error) {
+    console.error('Registration error:', error);
+    setErrors(prev => ({ ...prev, general: error.message }));
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   const handleGoogleSignup = () => {
     console.log('Google signup clicked');

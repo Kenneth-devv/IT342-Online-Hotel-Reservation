@@ -6,7 +6,7 @@ const LoginPage = () => {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    email: '',
+    username: '', // Changed from email to username to match Spring Boot
     password: ''
   });
   const [showPassword, setShowPassword] = useState(false);
@@ -30,10 +30,8 @@ const LoginPage = () => {
   const validateForm = () => {
     const newErrors = {};
 
-    if (!formData.email) {
-      newErrors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Email is invalid';
+    if (!formData.username) {
+      newErrors.username = 'Username is required';
     }
 
     if (!formData.password) {
@@ -57,14 +55,50 @@ const LoginPage = () => {
     setIsLoading(true);
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      console.log('Login submitted:', formData);
-      // On successful login, navigate to the home page
-      navigate('/home');
+      // Send login request to Spring Boot backend
+      const loginResponse = await fetch('http://localhost:8080/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          username: formData.username,
+          password: formData.password
+        }),
+        credentials: 'include' // Important for session cookies
+      });
+
+      if (!loginResponse.ok) {
+        throw new Error('Login failed. Please check your credentials.');
+      }
+
+      // Get redirect URL based on user role
+      const redirectResponse = await fetch('http://localhost:8080/api/auth/redirect', {
+        credentials: 'include'
+      });
+
+      if (!redirectResponse.ok) {
+        throw new Error('Failed to determine user role');
+      }
+
+      const redirectUrl = await redirectResponse.text();
+      
+      // Navigate to the appropriate dashboard based on user role
+      if (redirectUrl.includes('admin')) {
+        navigate('/admin/dashboard');
+      } else if (redirectUrl.includes('receptionist')) {
+        navigate('/receptionist/dashboard');
+      } else if (redirectUrl.includes('reservation')) {
+        navigate('/reservation/dashboard');
+      } else if (redirectUrl.includes('accounting')) {
+        navigate('/accounting/dashboard');
+      } else {
+        navigate('/hotelpage');
+      }
+
     } catch (error) {
       console.error('Login error:', error);
-      // Set a general error or specific field errors based on API response
-      setErrors(prev => ({ ...prev, general: 'Login failed. Please try again.' }));
+      setErrors(prev => ({ ...prev, general: error.message }));
     } finally {
       setIsLoading(false);
     }
@@ -72,26 +106,22 @@ const LoginPage = () => {
 
   const handleGoogleLogin = () => {
     console.log('Google login clicked');
+    // You would need to implement OAuth2 with Spring Security for this
   };
 
-  // Function to handle redirection to signup page
   const handleGoToSignup = () => {
-    navigate('/signup'); // Navigate to the /signup path
+    navigate('/signup');
   };
 
   return (
-    // Main container for the login page, setting up full viewport height and flexible centering.
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4 font-inter">
-      {/* Background pattern elements for visual flair */}
       <div className="absolute inset-0 z-0 overflow-hidden opacity-30">
         <div className="absolute w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob top-0 left-0"></div>
         <div className="absolute w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000 top-0 right-0"></div>
         <div className="absolute w-96 h-96 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000 bottom-0 left-0"></div>
       </div>
 
-      {/* Main content wrapper for the login form, centered and with max width */}
       <div className="relative z-10 w-full max-w-md mx-auto">
-        {/* Header section with icon, title, and subtitle */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl mb-6 shadow-lg">
             <Home className="w-8 h-8 text-white" />
@@ -100,32 +130,37 @@ const LoginPage = () => {
           <p className="text-gray-600">Sign in to your account to continue</p>
         </div>
 
-        {/* Login form card with frosted glass effect */}
         <div className="bg-white/80 backdrop-blur-lg rounded-3xl shadow-xl border border-white/20 p-8">
+          {errors.general && (
+            <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg text-sm">
+              {errors.general}
+            </div>
+          )}
+          
           <div className="space-y-6">
-            {/* Email Input Field */}
+            {/* Username Input Field (changed from email) */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                Email Address
+              <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
+                Username
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <Mail className="h-5 w-5 text-gray-400" />
                 </div>
                 <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
+                  type="text"
+                  id="username"
+                  name="username"
+                  value={formData.username}
                   onChange={handleInputChange}
                   className={`block w-full pl-10 pr-3 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors text-gray-900 ${
-                    errors.email ? 'border-red-300 bg-red-50' : 'border-gray-200 bg-white/50'
+                    errors.username ? 'border-red-300 bg-red-50' : 'border-gray-200 bg-white/50'
                   }`}
-                  placeholder="Enter your email"
+                  placeholder="Enter your username"
                 />
               </div>
-              {errors.email && (
-                <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+              {errors.username && (
+                <p className="mt-1 text-sm text-red-600">{errors.username}</p>
               )}
             </div>
 
@@ -237,7 +272,7 @@ const LoginPage = () => {
             <span className="text-gray-600">Don't have an account? </span>
             <button
               type="button"
-              onClick={handleGoToSignup} // Call the new navigation function
+              onClick={handleGoToSignup}
               className="font-semibold text-blue-600 hover:text-blue-500 transition-colors"
             >
               Sign up

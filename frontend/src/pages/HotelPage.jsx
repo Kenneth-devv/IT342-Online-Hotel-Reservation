@@ -42,7 +42,7 @@ const HotelPage = () => {
             <span className="nav-link" onClick={() => handleNavigation('/news')}>News</span>
             <span className="nav-link" onClick={() => handleNavigation('/contact')}>Contacts</span>
           </nav>
-          <button className="sign-in-btn">Sign In</button>
+          <button className="sign-in-btn">profile</button>
         </div>
       </header>
 
