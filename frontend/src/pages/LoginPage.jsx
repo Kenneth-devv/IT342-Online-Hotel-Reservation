@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, ArrowRight, Home } from 'lucide-react';
 import "../styles/Login.css";
+import { useNavigate } from 'react-router-dom';
 
 const LoginPage = ({ onClose, onSwitchToRegister }) => {  // Receive props from App.jsx
+  const navigate = useNavigate();
+  
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -55,17 +58,59 @@ const LoginPage = ({ onClose, onSwitchToRegister }) => {  // Receive props from 
     setIsLoading(true);
     
     try {
+      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 2000));
+      
       console.log('Login submitted:', formData);
+      
+      // Here you would typically:
+      // 1. Make an API call to authenticate the user
+      // 2. Store the authentication token/user data
+      // 3. Navigate to home page on success
+      
+      // For now, we'll simulate a successful login and navigate to home
+      console.log('Login successful! Redirecting to home page...');
+      
+      // Navigate to home page after successful login
+      navigate('/homepage');
+      
+      // If you're using the onClose prop (for modal-style login), you can also call it
+      if (onClose) {
+        onClose();
+      }
+      
     } catch (error) {
       console.error('Login error:', error);
+      // Handle login errors here
+      setErrors({ 
+        general: 'Login failed. Please check your credentials and try again.' 
+      });
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleGoogleLogin = () => {
+  const handleGoogleLogin = async () => {
     console.log('Google login clicked');
+    
+    try {
+      // Add your Google login logic here
+      // For now, we'll simulate successful Google login
+      console.log('Google login successful! Redirecting to home page...');
+      
+      // Navigate to home page after successful Google login
+      navigate('/home');
+      
+      if (onClose) {
+        onClose();
+      }
+      
+    } catch (error) {
+      console.error('Google login error:', error);
+      setErrors({ 
+        general: 'Google login failed. Please try again.' 
+      });
+    }
   };
 
   return (
@@ -81,7 +126,14 @@ const LoginPage = ({ onClose, onSwitchToRegister }) => {  // Receive props from 
           <p className="text-gray-600">Sign in to your account to continue</p>
         </div>
 
-        <div className="bg-white/80 backdrop-blur-lg rounded-3xl shadow-xl border border-white/20 p-8">
+        <form onSubmit={handleSubmit} className="bg-white/80 backdrop-blur-lg rounded-3xl shadow-xl border border-white/20 p-8">
+          {/* Show general error message if any */}
+          {errors.general && (
+            <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-xl">
+              {errors.general}
+            </div>
+          )}
+
           <div className="space-y-6">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
@@ -167,7 +219,6 @@ const LoginPage = ({ onClose, onSwitchToRegister }) => {  // Receive props from 
             <button
               type="submit"
               disabled={isLoading}
-              onClick={handleSubmit}
               className="w-full flex items-center justify-center px-4 py-3 border border-transparent text-base font-semibold rounded-xl text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl"
             >
               {isLoading ? (
@@ -209,14 +260,14 @@ const LoginPage = ({ onClose, onSwitchToRegister }) => {  // Receive props from 
           <div className="mt-6 text-center">
             <span className="text-gray-600">Don't have an account? </span>
             <button
-          type="button"
-          onClick={onSwitchToRegister}  // Use the prop passed from App.jsx
-          className="font-semibold text-blue-600 hover:text-blue-500 transition-colors"
-        >
+              type="button"
+              onClick={() => navigate('/register')}
+              className="font-semibold text-blue-600 hover:text-blue-500 transition-colors"
+            >
               Sign up
             </button>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   );
