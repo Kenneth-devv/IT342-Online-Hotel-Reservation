@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, ArrowRight, Home } from 'lucide-react';
-import "../styles/Login.css";
 import { useNavigate } from 'react-router-dom';
 
-const LoginPage = ({ onClose, onSwitchToRegister }) => {  // Receive props from App.jsx
+const LoginPage = () => {
   const navigate = useNavigate();
-  
+
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -30,94 +29,69 @@ const LoginPage = ({ onClose, onSwitchToRegister }) => {  // Receive props from 
 
   const validateForm = () => {
     const newErrors = {};
-    
+
     if (!formData.email) {
       newErrors.email = 'Email is required';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = 'Email is invalid';
     }
-    
+
     if (!formData.password) {
       newErrors.password = 'Password is required';
     } else if (formData.password.length < 6) {
       newErrors.password = 'Password must be at least 6 characters';
     }
-    
+
     return newErrors;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = validateForm();
-    
+
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
     }
-    
+
     setIsLoading(true);
-    
+
     try {
-      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 2000));
-      
       console.log('Login submitted:', formData);
-      
-      // Here you would typically:
-      // 1. Make an API call to authenticate the user
-      // 2. Store the authentication token/user data
-      // 3. Navigate to home page on success
-      
-      // For now, we'll simulate a successful login and navigate to home
-      console.log('Login successful! Redirecting to home page...');
-      
-      // Navigate to home page after successful login
-      navigate('/homepage');
-      
-      // If you're using the onClose prop (for modal-style login), you can also call it
-      if (onClose) {
-        onClose();
-      }
-      
+      // On successful login, navigate to the home page
+      navigate('/home');
     } catch (error) {
       console.error('Login error:', error);
-      // Handle login errors here
-      setErrors({ 
-        general: 'Login failed. Please check your credentials and try again.' 
-      });
+      // Set a general error or specific field errors based on API response
+      setErrors(prev => ({ ...prev, general: 'Login failed. Please try again.' }));
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleGoogleLogin = async () => {
+  const handleGoogleLogin = () => {
     console.log('Google login clicked');
-    
-    try {
-      // Add your Google login logic here
-      // For now, we'll simulate successful Google login
-      console.log('Google login successful! Redirecting to home page...');
-      
-      // Navigate to home page after successful Google login
-      navigate('/home');
-      
-      if (onClose) {
-        onClose();
-      }
-      
-    } catch (error) {
-      console.error('Google login error:', error);
-      setErrors({ 
-        general: 'Google login failed. Please try again.' 
-      });
-    }
+  };
+
+  // Function to handle redirection to signup page
+  const handleGoToSignup = () => {
+    navigate('/signup'); // Navigate to the /signup path
   };
 
   return (
-    <div className="login-container">
-      <div className="login-bg-pattern"></div>
-      
-      <div className="login-content">
+    // Main container for the login page, setting up full viewport height and flexible centering.
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4 font-inter">
+      {/* Background pattern elements for visual flair */}
+      <div className="absolute inset-0 z-0 overflow-hidden opacity-30">
+        <div className="absolute w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob top-0 left-0"></div>
+        <div className="absolute w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000 top-0 right-0"></div>
+        <div className="absolute w-96 h-96 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000 bottom-0 left-0"></div>
+      </div>
+
+      {/* Main content wrapper for the login form, centered and with max width */}
+      <div className="relative z-10 w-full max-w-md mx-auto">
+        {/* Header section with icon, title, and subtitle */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl mb-6 shadow-lg">
             <Home className="w-8 h-8 text-white" />
@@ -126,15 +100,10 @@ const LoginPage = ({ onClose, onSwitchToRegister }) => {  // Receive props from 
           <p className="text-gray-600">Sign in to your account to continue</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-white/80 backdrop-blur-lg rounded-3xl shadow-xl border border-white/20 p-8">
-          {/* Show general error message if any */}
-          {errors.general && (
-            <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-xl">
-              {errors.general}
-            </div>
-          )}
-
+        {/* Login form card with frosted glass effect */}
+        <div className="bg-white/80 backdrop-blur-lg rounded-3xl shadow-xl border border-white/20 p-8">
           <div className="space-y-6">
+            {/* Email Input Field */}
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                 Email Address
@@ -149,7 +118,7 @@ const LoginPage = ({ onClose, onSwitchToRegister }) => {  // Receive props from 
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className={`block w-full pl-10 pr-3 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
+                  className={`block w-full pl-10 pr-3 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors text-gray-900 ${
                     errors.email ? 'border-red-300 bg-red-50' : 'border-gray-200 bg-white/50'
                   }`}
                   placeholder="Enter your email"
@@ -160,6 +129,7 @@ const LoginPage = ({ onClose, onSwitchToRegister }) => {  // Receive props from 
               )}
             </div>
 
+            {/* Password Input Field */}
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
                 Password
@@ -174,7 +144,7 @@ const LoginPage = ({ onClose, onSwitchToRegister }) => {  // Receive props from 
                   name="password"
                   value={formData.password}
                   onChange={handleInputChange}
-                  className={`block w-full pl-10 pr-12 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
+                  className={`block w-full pl-10 pr-10 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors text-gray-900 ${
                     errors.password ? 'border-red-300 bg-red-50' : 'border-gray-200 bg-white/50'
                   }`}
                   placeholder="Enter your password"
@@ -196,6 +166,7 @@ const LoginPage = ({ onClose, onSwitchToRegister }) => {  // Receive props from 
               )}
             </div>
 
+            {/* Remember me and Forgot password section */}
             <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <input
@@ -216,9 +187,11 @@ const LoginPage = ({ onClose, onSwitchToRegister }) => {  // Receive props from 
               </button>
             </div>
 
+            {/* Sign In button */}
             <button
               type="submit"
               disabled={isLoading}
+              onClick={handleSubmit}
               className="w-full flex items-center justify-center px-4 py-3 border border-transparent text-base font-semibold rounded-xl text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl"
             >
               {isLoading ? (
@@ -232,6 +205,7 @@ const LoginPage = ({ onClose, onSwitchToRegister }) => {  // Receive props from 
             </button>
           </div>
 
+          {/* Or continue with section */}
           <div className="mt-6">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
@@ -243,6 +217,7 @@ const LoginPage = ({ onClose, onSwitchToRegister }) => {  // Receive props from 
             </div>
           </div>
 
+          {/* Google Sign-In button */}
           <button
             type="button"
             onClick={handleGoogleLogin}
@@ -257,17 +232,18 @@ const LoginPage = ({ onClose, onSwitchToRegister }) => {  // Receive props from 
             <span className="text-gray-700 font-medium group-hover:text-gray-900">Continue with Google</span>
           </button>
 
+          {/* Sign up link */}
           <div className="mt-6 text-center">
             <span className="text-gray-600">Don't have an account? </span>
             <button
               type="button"
-              onClick={() => navigate('/register')}
+              onClick={handleGoToSignup} // Call the new navigation function
               className="font-semibold text-blue-600 hover:text-blue-500 transition-colors"
             >
               Sign up
             </button>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   );
