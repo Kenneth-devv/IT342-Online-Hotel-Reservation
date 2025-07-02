@@ -1,18 +1,25 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import "../styles/HomePage.css";// Optional: your CSS file
-
+import "../styles/HomePage.css";
 
 const HomePage = () => {
   const navigate = useNavigate();
   const [country, setCountry] = useState('Philippines');
   const [city, setCity] = useState('Cebu');
   const [propertyType, setPropertyType] = useState('Hotels');
-  const [minPrice, setMinPrice] = useState('50,000');
-  const [maxPrice, setMaxPrice] = useState('100,000');
+  const [minPrice, setMinPrice] = useState('50000');
+  const [maxPrice, setMaxPrice] = useState('100000');
 
   const handleSearch = () => {
-    console.log('Searching for:', { country, city, propertyType, minPrice, maxPrice });
+    const query = new URLSearchParams({
+      country,
+      city,
+      propertyType,
+      minPrice,
+      maxPrice,
+    }).toString();
+
+    navigate(`/hotelpage?${query}`);
   };
 
   const handleNavigation = (path) => {
@@ -34,9 +41,9 @@ const HomePage = () => {
             <span className="nav-link" onClick={() => handleNavigation('/news')}>News</span>
             <span className="nav-link" onClick={() => handleNavigation('/contact')}>Contacts</span>
           </nav>
-         <button className="sign-in-btn" onClick={() => handleNavigation('/login')}>
-  Sign In
-</button>
+          <button className="sign-in-btn" onClick={() => handleNavigation('/login')}>
+            Sign In
+          </button>
         </div>
       </header>
 
@@ -56,7 +63,7 @@ const HomePage = () => {
                 <button className="search-tab">TRADING</button>
                 <button className="search-tab">FEATURED</button>
               </div>
-              
+
               <div className="search-form">
                 <div className="form-group">
                   <label>Country</label>
@@ -108,20 +115,20 @@ const HomePage = () => {
                       onChange={(e) => setMinPrice(e.target.value)}
                       className="form-select price-select"
                     >
-                      <option value="50,000">$ 50,000</option>
-                      <option value="100,000">$ 100,000</option>
-                      <option value="250,000">$ 250,000</option>
-                      <option value="500,000">$ 500,000</option>
+                      <option value="50000">$ 50,000</option>
+                      <option value="100000">$ 100,000</option>
+                      <option value="250000">$ 250,000</option>
+                      <option value="500000">$ 500,000</option>
                     </select>
                     <select 
                       value={maxPrice} 
                       onChange={(e) => setMaxPrice(e.target.value)}
                       className="form-select price-select"
                     >
-                      <option value="100,000">$ 100,000</option>
-                      <option value="250,000">$ 250,000</option>
-                      <option value="500,000">$ 500,000</option>
-                      <option value="1,000,000">$ 1,000,000</option>
+                      <option value="100000">$ 100,000</option>
+                      <option value="250000">$ 250,000</option>
+                      <option value="500000">$ 500,000</option>
+                      <option value="1000000">$ 1,000,000</option>
                     </select>
                   </div>
                 </div>
@@ -135,7 +142,6 @@ const HomePage = () => {
         </div>
       </section>
 
-    
       {/* Footer */}
       <footer className="footer">
         <p>&copy; 2024 Bright Hotel. All rights reserved.</p>
