@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import "../styles/HomePage.css";// Optional: your CSS file
+import "../styles/HomePage.css";
 
 
 const HomePage = () => {
@@ -12,7 +12,16 @@ const HomePage = () => {
   const [maxPrice, setMaxPrice] = useState('100,000');
 
   const handleSearch = () => {
-    console.log('Searching for:', { country, city, propertyType, minPrice, maxPrice });
+    const searchParams = new URLSearchParams({
+      country,
+      city,
+      propertyType,
+      minPrice,
+      maxPrice
+    });
+
+    // Navigate to hotels page with search parameters
+    navigate(`/hotelPage?${searchParams.toString()}`);
   };
 
   const handleNavigation = (path) => {
@@ -30,34 +39,31 @@ const HomePage = () => {
           <nav className="navigation">
             <span className="nav-link active" onClick={() => handleNavigation('/')}>Home</span>
             <span className="nav-link" onClick={() => handleNavigation('/hotelpage')}>Hotels</span>
-            <span className="nav-link" onClick={() => handleNavigation('/about')}>About Us</span>
             <span className="nav-link" onClick={() => handleNavigation('/news')}>News</span>
             <span className="nav-link" onClick={() => handleNavigation('/contact')}>Contacts</span>
           </nav>
          <button className="sign-in-btn" onClick={() => handleNavigation('/login')}>
-  Sign In
-</button>
+            Sign In
+          </button>
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section className="hero-section" id="home">
-        <div className="hero-overlay">
-          <div className="hero-content">
-            <div className="hero-text">
-              <h2 className="hero-title">The ease of buying</h2>
-              <h2 className="hero-subtitle">a dream hotel</h2>
+      <section className="hero-section">
+        <div className="hero-content">
+          <div className="hero-text">
+            <h2 className="hero-title">The ease of buying</h2>
+            <h2 className="hero-subtitle">a dream hotel</h2>
+          </div>
+              {/* Search Container */}
+          <div className="search-container">
+            <div className="search-tabs">
+              <button className="search-tab active">BUY HOTELS</button>
+              <button className="search-tab">TRADING</button>
+              <button className="search-tab">FEATURED</button>
             </div>
 
-            {/* Search Form */}
-            <div className="search-container">
-              <div className="search-tabs">
-                <button className="search-tab active">BUY HOTELS</button>
-                <button className="search-tab">TRADING</button>
-                <button className="search-tab">FEATURED</button>
-              </div>
-              
-              <div className="search-form">
+            <div className="search-form">
+              <div className="form-row">
                 <div className="form-group">
                   <label>Country</label>
                   <select 
@@ -66,9 +72,6 @@ const HomePage = () => {
                     className="form-select"
                   >
                     <option value="Philippines">Philippines</option>
-                    <option value="USA">USA</option>
-                    <option value="Japan">Japan</option>
-                    <option value="Singapore">Singapore</option>
                   </select>
                 </div>
 
@@ -126,16 +129,17 @@ const HomePage = () => {
                   </div>
                 </div>
 
-                <button className="search-btn" onClick={handleSearch}>
-                  SEARCH
-                </button>
+                <button className="search-btn" onClick={handleSearch}>SEARCH</button>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-    
+      <section className="content-area">
+        {/* Add your photo components here */}
+      </section>
+
       {/* Footer */}
       <footer className="footer">
         <p>&copy; 2024 Bright Hotel. All rights reserved.</p>

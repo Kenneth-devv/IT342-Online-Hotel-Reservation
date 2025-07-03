@@ -139,10 +139,10 @@ const SignupPage = () => {
   }
 };
 
-  const handleGoogleSignup = () => {
-    console.log('Google signup clicked');
-    // Implement Google OAuth logic here
-  };
+ const handleGoogleSignup = () => {
+  window.location.href = "http://localhost:8080/oauth2/authorization/google";
+};
+
 
   /**
    * Handles navigation to the login page.
