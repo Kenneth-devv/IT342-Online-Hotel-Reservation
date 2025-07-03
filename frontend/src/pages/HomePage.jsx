@@ -7,19 +7,21 @@ const HomePage = () => {
   const [country, setCountry] = useState('Philippines');
   const [city, setCity] = useState('Cebu');
   const [propertyType, setPropertyType] = useState('Hotels');
-  const [minPrice, setMinPrice] = useState('50000');
-  const [maxPrice, setMaxPrice] = useState('100000');
+  const [minPrice, setMinPrice] = useState('50,000');
+  const [maxPrice, setMaxPrice] = useState('100,000');
 
   const handleSearch = () => {
-    const query = new URLSearchParams({
+    // Create search parameters
+    const searchParams = new URLSearchParams({
       country,
       city,
       propertyType,
       minPrice,
-      maxPrice,
-    }).toString();
-
-    navigate(`/hotelpage?${query}`);
+      maxPrice
+    });
+    
+    // Navigate to hotels page with search parameters
+    navigate(`/hotelPage?${searchParams.toString()}`);
   };
 
   const handleNavigation = (path) => {
@@ -37,7 +39,6 @@ const HomePage = () => {
           <nav className="navigation">
             <span className="nav-link active" onClick={() => handleNavigation('/')}>Home</span>
             <span className="nav-link" onClick={() => handleNavigation('/hotelpage')}>Hotels</span>
-            <span className="nav-link" onClick={() => handleNavigation('/about')}>About Us</span>
             <span className="nav-link" onClick={() => handleNavigation('/news')}>News</span>
             <span className="nav-link" onClick={() => handleNavigation('/contact')}>Contacts</span>
           </nav>
@@ -48,23 +49,23 @@ const HomePage = () => {
       </header>
 
       {/* Hero Section */}
-      <section className="hero-section" id="home">
-        <div className="hero-overlay">
-          <div className="hero-content">
-            <div className="hero-text">
-              <h2 className="hero-title">The ease of buying</h2>
-              <h2 className="hero-subtitle">a dream hotel</h2>
+      <section className="hero-section">
+        <div className="hero-content">
+          <div className="hero-text">
+            <h2 className="hero-title">The ease of buying</h2>
+            <h2 className="hero-subtitle">a dream hotel</h2>
+          </div>
+
+          {/* Search Container */}
+          <div className="search-container">
+            <div className="search-tabs">
+              <button className="search-tab active">BUY HOTELS</button>
+              <button className="search-tab">TRADING</button>
+              <button className="search-tab">FEATURED</button>
             </div>
-
-            {/* Search Form */}
-            <div className="search-container">
-              <div className="search-tabs">
-                <button className="search-tab active">BUY HOTELS</button>
-                <button className="search-tab">TRADING</button>
-                <button className="search-tab">FEATURED</button>
-              </div>
-
-              <div className="search-form">
+            
+            <div className="search-form">
+              <div className="form-row">
                 <div className="form-group">
                   <label>Country</label>
                   <select 
@@ -73,9 +74,7 @@ const HomePage = () => {
                     className="form-select"
                   >
                     <option value="Philippines">Philippines</option>
-                    <option value="USA">USA</option>
-                    <option value="Japan">Japan</option>
-                    <option value="Singapore">Singapore</option>
+                    
                   </select>
                 </div>
 
@@ -115,31 +114,34 @@ const HomePage = () => {
                       onChange={(e) => setMinPrice(e.target.value)}
                       className="form-select price-select"
                     >
-                      <option value="50000">$ 50,000</option>
-                      <option value="100000">$ 100,000</option>
-                      <option value="250000">$ 250,000</option>
-                      <option value="500000">$ 500,000</option>
+                      <option value="50,000">$ 50,000</option>
+                      <option value="100,000">$ 100,000</option>
+                      <option value="250,000">$ 250,000</option>
+                      <option value="500,000">$ 500,000</option>
                     </select>
                     <select 
                       value={maxPrice} 
                       onChange={(e) => setMaxPrice(e.target.value)}
                       className="form-select price-select"
                     >
-                      <option value="100000">$ 100,000</option>
-                      <option value="250000">$ 250,000</option>
-                      <option value="500000">$ 500,000</option>
-                      <option value="1000000">$ 1,000,000</option>
+                      <option value="100,000">$ 100,000</option>
+                      <option value="250,000">$ 250,000</option>
+                      <option value="500,000">$ 500,000</option>
+                      <option value="1,000,000">$ 1,000,000</option>
                     </select>
                   </div>
                 </div>
 
-                <button className="search-btn" onClick={handleSearch}>
-                  SEARCH
-                </button>
+                <button className="search-btn" onClick={handleSearch}>SEARCH</button>
               </div>
             </div>
           </div>
         </div>
+      </section>
+
+      {/* Content Area - Empty for your components */}
+      <section className="content-area">
+        {/* Add your photo components here */}
       </section>
 
       {/* Footer */}
