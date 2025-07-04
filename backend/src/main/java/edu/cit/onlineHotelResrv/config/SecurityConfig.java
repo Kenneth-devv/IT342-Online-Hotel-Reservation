@@ -2,6 +2,7 @@ package edu.cit.onlineHotelResrv.config;
 
 import edu.cit.onlineHotelResrv.security.CustomUserDetailsService;
 import edu.cit.onlineHotelResrv.security.JsonUsernamePasswordAuthenticationFilter;
+import edu.cit.onlineHotelResrv.security.OAuth2LoginSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,6 +29,9 @@ public class SecurityConfig {
     @Autowired
     private CustomUserDetailsService userDetailsService;
 
+    @Autowired
+    private OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
         return authConfig.getAuthenticationManager();
@@ -43,13 +47,16 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/login", "/signup", "/api/auth/**").permitAll()
-                        .requestMatchers("/user/dashboard").hasRole("USER")
-                        .requestMatchers("/admin/dashboard").hasRole("ADMIN")
-                        .requestMatchers("/receptionist/dashboard").hasRole("RECEPTIONIST")
-                        .requestMatchers("/reservation/dashboard").hasRole("RESERVATION_STAFF")
-                        .requestMatchers("/accounting/dashboard").hasRole("ACCOUNTING")
+                        .requestMatchers("/", "/login", "/signup", "/api/auth/**", "/oauth2/**").permitAll()
+                        .requestMatchers("/user/dashboard").hasAuthority("USER")
+                        .requestMatchers("/admin/dashboard").hasAuthority("ADMIN")
+                        .requestMatchers("/receptionist/dashboard").hasAuthority("RECEPTIONIST")
+                        .requestMatchers("/reservation/dashboard").hasAuthority("RESERVATION_STAFF")
+                        .requestMatchers("/accounting/dashboard").hasAuthority("ACCOUNTING")
                         .anyRequest().authenticated()
+                )
+                .oauth2Login(oauth2 -> oauth2
+                        .successHandler(oAuth2LoginSuccessHandler)
                 )
                 .addFilterAt(jsonLoginFilter, UsernamePasswordAuthenticationFilter.class)
                 .logout(logout -> logout

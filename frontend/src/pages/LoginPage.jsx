@@ -3,6 +3,7 @@ import { Eye, EyeOff, Mail, Lock, ArrowRight, Home } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
+
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -65,7 +66,7 @@ const LoginPage = () => {
           username: formData.username,
           password: formData.password
         }),
-        credentials: 'include' // Important for session cookies
+        credentials: 'include'
       });
 
       if (!loginResponse.ok) {
@@ -105,9 +106,9 @@ const LoginPage = () => {
   };
 
   const handleGoogleLogin = () => {
-    console.log('Google login clicked');
-    // You would need to implement OAuth2 with Spring Security for this
-  };
+  window.location.href = "http://localhost:8080/oauth2/authorization/google";
+};
+
 
   const handleGoToSignup = () => {
     navigate('/signup');

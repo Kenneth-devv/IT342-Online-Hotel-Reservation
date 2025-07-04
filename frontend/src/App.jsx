@@ -5,6 +5,9 @@ import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import HotelPage from './pages/HotelPage';
+import AboutUs from './pages/AboutUs';
+import BookingPage from './pages/BookingPage';
+
 
 const App = () => {
   return (
@@ -25,6 +28,10 @@ const App = () => {
 
         {/* Route for the Hotel Page */}
         <Route path="/hotelpage" element={<HotelPage />} />
+
+        <Route path="/aboutus" element={<AboutUs />} />
+
+        <Route path="/bookingpage/:hotelId" element={<BookingPage />} />
         
       </Routes>
     </Router>
