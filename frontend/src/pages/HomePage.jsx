@@ -1,10 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Search, Calendar, Users, MapPin, Hotel, Star, Award, ShieldCheck, Headphones, Facebook, Twitter, Instagram, Linkedin, Menu, X, Plus, Minus } from 'lucide-react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
-import backgroundIMG from '../assets/images/backgroundIMG.jpg'; // Import the background image
-
+import { useNavigate } from 'react-router-dom';
+import backgroundIMG from '../assets/images/backgroundIMG.jpg';
 const HomePage = () => {
-  const navigate = useNavigate(); // Initialize useNavigate hook
+  const navigate = useNavigate();
 
   // State for the mobile navigation menu
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -88,8 +87,8 @@ const HomePage = () => {
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    // In a real application, you would navigate to a search results page
-    // or trigger an API call here.
+    // Navigate to a search results page
+    // Trigger an API call here.
     console.log("Searching with:", searchData);
     alert("Search functionality is a placeholder. In a real app, this would navigate to results!");
   };
