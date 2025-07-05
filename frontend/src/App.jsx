@@ -7,6 +7,8 @@ import SignupPage from './pages/SignupPage';
 import HotelPage from './pages/HotelPage';
 import AboutUs from './pages/AboutUs';
 import BookingPage from './pages/BookingPage';
+import SearchResultsPage from './pages/SearchResultsPage';
+
 
 
 const App = () => {
@@ -33,6 +35,9 @@ const App = () => {
 
         <Route path="/bookingpage/:hotelId" element={<BookingPage />} />
         
+        {/* Route for the Search Results Page */}
+        <Route path="/search-results" element={<SearchResultsPage />} />
+
       </Routes>
     </Router>
   );
