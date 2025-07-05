@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'; // Removed extra '=>'
 // Import additional icons for First Name, Last Name, and Phone
 import { Mail, Lock, Eye, EyeOff, UserPlus, ArrowRight, User, Phone } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -83,65 +83,66 @@ const SignupPage = () => {
     return newErrors;
   };
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
-  const validationErrors = validateForm();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const validationErrors = validateForm();
 
-  if (Object.keys(validationErrors).length > 0) {
-    setErrors(validationErrors);
-    return;
-  }
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
 
-  setIsLoading(true);
+    setIsLoading(true);
 
-  try {
-    const response = await fetch('http://localhost:8080/api/auth/signup', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        username: formData.email, // Using email as username
-        password: formData.password,
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        phone: formData.phone
-      }),
-      credentials: 'include'
-    });
+    try {
+      const response = await fetch('http://localhost:8080/api/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          username: formData.email, // Using email as username as per backend LoginRequest
+          password: formData.password,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          phone: formData.phone
+        }),
+        credentials: 'include' // Important for sending cookies (JSESSIONID)
+      });
 
-    const data = await response.json();
+      const data = await response.json();
 
-    if (!response.ok) {
-  if (data.message.includes("Email is already in use")) {
-    setErrors(prev => ({ ...prev, email: "Email is already in use" }));
-  } else if (data.message.includes("Username is already taken")) {
-    setErrors(prev => ({ ...prev, email: "This email is already registered" }));
-  } else {
-    setErrors(prev => ({ ...prev, general: data.message || "Registration failed" }));
-  }
-  return;
-}
-    // Redirect to login page after successful registration
-    navigate('/login', { 
-      state: { 
-        registrationSuccess: true,
-        message: 'Registration successful! Please log in.' 
-      } 
-    });
+      if (!response.ok) {
+        if (data.message && data.message.includes("Email is already in use")) {
+          setErrors(prev => ({ ...prev, email: "Email is already in use" }));
+        } else if (data.message && data.message.includes("Username is already taken")) {
+          // If username is taken, and we're using email as username, this means the email is registered
+          setErrors(prev => ({ ...prev, email: "This email is already registered" }));
+        } else {
+          setErrors(prev => ({ ...prev, general: data.message || "Registration failed" }));
+        }
+        return;
+      }
+      // Redirect to login page after successful registration
+      navigate('/login', {
+        state: {
+          registrationSuccess: true,
+          message: 'Registration successful! Please log in.'
+        }
+      });
 
-  } catch (error) {
-    console.error('Registration error:', error);
-    setErrors(prev => ({ ...prev, general: error.message }));
-  } finally {
-    setIsLoading(false);
-  }
-};
+    } catch (error) {
+      console.error('Registration error:', error);
+      setErrors(prev => ({ ...prev, general: error.message }));
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
- const handleGoogleSignup = () => {
-  window.location.href = "http://localhost:8080/oauth2/authorization/google";
-};
+  const handleGoogleSignup = () => {
+    window.location.href = "http://localhost:8080/oauth2/authorization/google";
+  };
 
 
   /**
@@ -176,56 +177,59 @@ const SignupPage = () => {
         {/* Registration form card with frosted glass effect */}
         <div className="bg-white/80 backdrop-blur-lg rounded-3xl shadow-xl border border-white/20 p-8">
           <div className="space-y-6">
-            {/* First Name Input Field */}
-            <div>
-              <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-2">
-                First Name
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <User className="h-5 w-5 text-gray-400" />
+            {/* First Name and Last Name Input Fields - Side by Side */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* First Name Input Field */}
+              <div>
+                <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-2">
+                  First Name
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <User className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    type="text"
+                    id="firstName"
+                    name="firstName"
+                    value={formData.firstName}
+                    onChange={handleInputChange}
+                    className={`block w-full pl-10 pr-3 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors text-gray-900 ${
+                      errors.firstName ? 'border-red-300 bg-red-50' : 'border-gray-200 bg-white/50'
+                    }`}
+                    placeholder="Enter your first name"
+                  />
                 </div>
-                <input
-                  type="text"
-                  id="firstName"
-                  name="firstName"
-                  value={formData.firstName}
-                  onChange={handleInputChange}
-                  className={`block w-full pl-10 pr-3 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors text-gray-900 ${
-                    errors.firstName ? 'border-red-300 bg-red-50' : 'border-gray-200 bg-white/50'
-                  }`}
-                  placeholder="Enter your first name"
-                />
+                {errors.firstName && (
+                  <p className="mt-1 text-sm text-red-600">{errors.firstName}</p>
+                )}
               </div>
-              {errors.firstName && (
-                <p className="mt-1 text-sm text-red-600">{errors.firstName}</p>
-              )}
-            </div>
 
-            {/* Last Name Input Field */}
-            <div>
-              <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-2">
-                Last Name
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <User className="h-5 w-5 text-gray-400" />
+              {/* Last Name Input Field */}
+              <div>
+                <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-2">
+                  Last Name
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <User className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    type="text"
+                    id="lastName"
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleInputChange}
+                    className={`block w-full pl-10 pr-3 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors text-gray-900 ${
+                      errors.lastName ? 'border-red-300 bg-red-50' : 'border-gray-200 bg-white/50'
+                    }`}
+                    placeholder="Enter your last name"
+                  />
                 </div>
-                <input
-                  type="text"
-                  id="lastName"
-                  name="lastName"
-                  value={formData.lastName}
-                  onChange={handleInputChange}
-                  className={`block w-full pl-10 pr-3 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors text-gray-900 ${
-                    errors.lastName ? 'border-red-300 bg-red-50' : 'border-gray-200 bg-white/50'
-                  }`}
-                  placeholder="Enter your last name"
-                />
+                {errors.lastName && (
+                  <p className="mt-1 text-sm text-red-600">{errors.lastName}</p>
+                )}
               </div>
-              {errors.lastName && (
-                <p className="mt-1 text-sm text-red-600">{errors.lastName}</p>
-              )}
             </div>
 
             {/* Email Input Field */}

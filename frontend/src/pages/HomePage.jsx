@@ -1,20 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Search, Calendar, Users, MapPin, Hotel, Star, Award, ShieldCheck, Headphones, Facebook, Twitter, Instagram, Linkedin, Menu, X, Plus, Minus } from 'lucide-react';
+import { Search, Calendar, Users, MapPin, Star, Award, ShieldCheck, Headphones, Facebook, Twitter, Instagram, Linkedin, Plus, Minus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import backgroundIMG from '../assets/images/backgroundIMG.jpg';
+import Header from '../components/Header';
+
 const HomePage = () => {
   const navigate = useNavigate();
 
-  // State for the mobile navigation menu
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  // State for showing/hiding the guest picker pop-over
   const [showGuestPicker, setShowGuestPicker] = useState(false);
 
-  // Refs for detecting clicks outside the guest picker
   const guestPickerRef = useRef(null);
   const guestInputRef = useRef(null);
 
-  // State for the search form
   const [searchData, setSearchData] = useState({
     destination: '',
     checkIn: '',
@@ -24,7 +21,6 @@ const HomePage = () => {
     children: 0,
   });
 
-  // Effect to handle clicks outside the guest picker to close it
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -51,7 +47,6 @@ const HomePage = () => {
     }));
   };
 
-  // Handler for incrementing/decrementing rooms, adults, children
   const handleGuestRoomChange = (type, operation) => {
     setSearchData(prev => {
       let newRooms = prev.rooms;
@@ -60,20 +55,18 @@ const HomePage = () => {
 
       if (type === 'rooms') {
         newRooms = operation === 'increment' ? prev.rooms + 1 : prev.rooms - 1;
-        newRooms = Math.max(1, newRooms); // Minimum 1 room
+        newRooms = Math.max(1, newRooms);
 
-        // If rooms decrease, ensure adults are not less than rooms
         if (newAdults < newRooms) {
           newAdults = newRooms;
         }
       } else if (type === 'adults') {
         newAdults = operation === 'increment' ? prev.adults + 1 : prev.adults - 1;
-        // Ensure adults are at least equal to rooms
         newAdults = Math.max(newRooms, newAdults);
-        newAdults = Math.max(1, newAdults); // Minimum 1 adult overall
+        newAdults = Math.max(1, newAdults);
       } else if (type === 'children') {
         newChildren = operation === 'increment' ? prev.children + 1 : prev.children + 1;
-        newChildren = Math.max(0, newChildren); // Minimum 0 children
+        newChildren = Math.max(0, newChildren);
       }
 
       return {
@@ -87,13 +80,11 @@ const HomePage = () => {
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    // Navigate to a search results page
-    // Trigger an API call here.
     console.log("Searching with:", searchData);
-    alert("Search functionality is a placeholder. In a real app, this would navigate to results!");
+    // Navigate to search results page (e.g., /search-results)
+    navigate('/search-results'); // Example navigation
   };
 
-  // Helper function to format guest display
   const getGuestSummary = () => {
     const roomText = `${searchData.rooms} room${searchData.rooms > 1 ? 's' : ''}`;
     const adultText = `${searchData.adults} adult${searchData.adults > 1 ? 's' : ''}`;
@@ -101,7 +92,6 @@ const HomePage = () => {
     return `${roomText}, ${adultText}${childrenText}`;
   };
 
-  // Dummy data for featured hotels
   const featuredHotels = [
     {
       id: 1,
@@ -109,7 +99,7 @@ const HomePage = () => {
       location: 'Bonifacio Global City, Taguig',
       price: '₱8,500',
       image: 'https://placehold.co/600x400/A78BFA/FFFFFF?text=Hyatt+Manila',
-      description: 'Experience luxury and comfort in the heart of the city. Enjoy our world-class amenities and exceptional service for an unforgettable stay.', // Longer description to demonstrate truncation
+      description: 'Experience luxury and comfort in the heart of the city. Enjoy our world-class amenities and exceptional service for an unforgettable stay.',
       rating: 4.8
     },
     {
@@ -136,85 +126,19 @@ const HomePage = () => {
       location: 'Pasay City, Manila',
       price: '₱7,900',
       image: 'https://placehold.co/600x400/4F46E5/FFFFFF?text=Conrad+Manila',
-      description: 'Waterfront luxury with stunning views of Manila Bay. Enjoy exquisite dining, a serene spa, and direct access to premier shopping.', // Longer description
+      description: 'Waterfront luxury with stunning views of Manila Bay. Enjoy exquisite dining, a serene spa, and direct access to premier shopping.',
       rating: 4.7
     }
   ];
 
   return (
     <div className="min-h-screen bg-gray-50 font-inter text-gray-800">
-      {/* Header */}
-      <header className="bg-white/90 backdrop-blur-lg shadow-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          {/* Logo */}
-          <div className="flex items-center space-x-2">
-            <span className="text-2xl font-bold text-gray-900">Bright Hotel</span>
-          </div>
-
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex space-x-8">
-            <button type="button" className="text-gray-600 hover:text-blue-600 font-medium transition-colors">Home</button>
-            <button type="button" className="text-gray-600 hover:text-blue-600 font-medium transition-colors">Hotels</button>
-            <button type="button" className="text-gray-600 hover:text-blue-600 font-medium transition-colors">Deals</button>
-            <button type="button" className="text-gray-600 hover:text-blue-600 font-medium transition-colors">About Us</button>
-            <button type="button" className="text-gray-600 hover:text-blue-600 font-medium transition-colors">Contact</button>
-          </nav>
-
-          {/* Auth Buttons */}
-          <div className="hidden md:flex space-x-4">
-            <button
-              onClick={() => navigate('/login')} // Navigate to Login page
-              className="px-5 py-2 rounded-xl text-blue-600 border border-blue-600 hover:bg-blue-50 transition-colors"
-            >
-              Login
-            </button>
-            <button
-              onClick={() => navigate('/signup')} // Navigate to Sign Up page
-              className="px-5 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition-colors shadow-md"
-            >
-              Sign Up
-            </button>
-          </div>
-
-          {/* Mobile Menu Button */}
-          <div className="md:hidden">
-            <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-gray-600 hover:text-blue-600">
-              {isMobileMenuOpen ? <X className="w-7 h-7" /> : <Menu className="w-7 h-7" />}
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile Menu Overlay */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden absolute top-full left-0 w-full bg-white/95 backdrop-blur-lg shadow-lg py-4 transition-all duration-300 ease-in-out">
-            <nav className="flex flex-col items-center space-y-4">
-              <button type="button" onClick={() => { /* navigate('/home'); */ setIsMobileMenuOpen(false); }} className="text-gray-700 hover:text-blue-600 font-medium text-lg py-2">Home</button>
-              <button type="button" onClick={() => { /* navigate('/hotels'); */ setIsMobileMenuOpen(false); }} className="text-gray-700 hover:text-blue-600 font-medium text-lg py-2">Hotels</button>
-              <button type="button" onClick={() => { /* navigate('/deals'); */ setIsMobileMenuOpen(false); }} className="text-gray-700 hover:text-blue-600 font-medium text-lg py-2">Deals</button>
-              <button type="button" onClick={() => { /* navigate('/aboutus'); */ setIsMobileMenuOpen(false); }} className="text-gray-700 hover:text-blue-600 font-medium text-lg py-2">About Us</button>
-              <button type="button" onClick={() => { /* navigate('/contact'); */ setIsMobileMenuOpen(false); }} className="text-gray-700 hover:text-blue-600 font-medium text-lg py-2">Contact</button>
-              <div className="w-full border-t border-gray-200 my-2"></div>
-              <button
-                onClick={() => { navigate('/login'); setIsMobileMenuOpen(false); }} // Navigate and close menu
-                className="w-4/5 px-5 py-2 rounded-xl text-blue-600 border border-blue-600 hover:bg-blue-50 transition-colors"
-              >
-                Login
-              </button>
-              <button
-                onClick={() => { navigate('/signup'); setIsMobileMenuOpen(false); }} // Navigate and close menu
-                className="w-4/5 px-5 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition-colors shadow-md"
-              >
-                Sign Up
-              </button>
-            </nav>
-          </div>
-        )}
-      </header>
+      <Header /> {/* Use the new Header component */}
 
       {/* Hero Section */}
       <section className="relative h-[60vh] md:h-[70vh] bg-cover bg-center flex items-center justify-center text-white"
-        style={{ backgroundImage: `url(${backgroundIMG})` }}> {/* Updated background image */}
-        <div className="absolute inset-0 bg-black opacity-50 rounded-b-3xl"></div> {/* Dark overlay */}
+        style={{ backgroundImage: `url(${backgroundIMG})` }}>
+        <div className="absolute inset-0 bg-black opacity-50 rounded-b-3xl"></div>
         <div className="relative z-10 text-center p-4">
           <h1 className="text-4xl md:text-6xl font-extrabold leading-tight mb-4 drop-shadow-lg">
             Find Your Perfect Stay
@@ -409,12 +333,9 @@ const HomePage = () => {
                   <p className="text-gray-600 flex items-center mb-3">
                     <MapPin className="w-4 h-4 mr-1 text-blue-500" /> {hotel.location}
                   </p>
-                  {/* Fixed height for description to ensure alignment */}
                   <p className="text-gray-700 text-sm mb-4 h-16 overflow-hidden text-ellipsis">{hotel.description}</p>
                   <div className="flex items-center justify-between mt-auto">
-                    {/* Display single price */}
                     <span className="text-2xl font-bold text-blue-600">{hotel.price}<span className="text-base text-gray-500 font-normal">/night</span></span>
-                    {/* Updated rating display */}
                     <div className="flex items-center text-gray-700">
                       <span className="font-semibold mr-1">{hotel.rating.toFixed(1)}</span>
                       <Star className="w-5 h-5 text-yellow-400 fill-current" />
@@ -427,7 +348,6 @@ const HomePage = () => {
               </div>
             ))}
           </div>
-          {/* See More button */}
           <div className="text-center mt-12">
             <button className="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-full shadow-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 transform hover:scale-105">
               See More Hotels
@@ -457,7 +377,7 @@ const HomePage = () => {
               <p className="text-gray-600">Our dedicated team is here to assist you anytime.</p>
             </div>
             <div className="text-center p-6 bg-green-50 rounded-2xl shadow-sm border border-green-100">
-              <Hotel className="w-12 h-12 text-green-600 mx-auto mb-4" />
+              {/* Removed Hotel icon from here, as it's now in Header */}
               <h3 className="text-xl font-semibold text-gray-900 mb-2">Vast Selection</h3>
               <p className="text-gray-600">Choose from thousands of hotels worldwide.</p>
             </div>

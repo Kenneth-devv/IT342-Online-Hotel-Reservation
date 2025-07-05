@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import "../styles/HomePage.css";
 import "../styles/HotelPage.css";
 
 const HotelPage = () => {
