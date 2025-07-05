@@ -55,6 +55,6 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
             userRepository.save(newUser);
         }
 
-        response.sendRedirect("http://localhost:3000/hotelpage");
+        response.sendRedirect("http://localhost:3000");
     }
 }
