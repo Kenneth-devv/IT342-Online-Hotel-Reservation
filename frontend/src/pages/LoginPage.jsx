@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, ArrowRight, Home } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const LoginPage = () => {
-
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const [formData, setFormData] = useState({
     username: '', // Changed from email to username to match Spring Boot
@@ -56,45 +57,28 @@ const LoginPage = () => {
     setIsLoading(true);
 
     try {
-      // Send login request to Spring Boot backend
-      const loginResponse = await fetch('http://localhost:8080/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          username: formData.username,
-          password: formData.password
-        }),
-        credentials: 'include'
+      const result = await login({
+        username: formData.username,
+        password: formData.password
       });
 
-      if (!loginResponse.ok) {
-        throw new Error('Login failed. Please check your credentials.');
-      }
+      if (result.success) {
+        // Get user info to determine role-based redirect
+        const userInfoResponse = await fetch('http://localhost:8080/api/auth/status', {
+          credentials: 'include'
+        });
 
-      // Get redirect URL based on user role
-      const redirectResponse = await fetch('http://localhost:8080/api/auth/redirect', {
-        credentials: 'include'
-      });
-
-      if (!redirectResponse.ok) {
-        throw new Error('Failed to determine user role');
-      }
-
-      const redirectUrl = await redirectResponse.text();
-      
-      // Navigate to the appropriate dashboard based on user role
-      if (redirectUrl.includes('admin')) {
-        navigate('/admin/dashboard');
-      } else if (redirectUrl.includes('receptionist')) {
-        navigate('/receptionist/dashboard');
-      } else if (redirectUrl.includes('reservation')) {
-        navigate('/reservation/dashboard');
-      } else if (redirectUrl.includes('accounting')) {
-        navigate('/accounting/dashboard');
+        if (userInfoResponse.ok) {
+          const userInfo = await userInfoResponse.json();
+          
+          // Redirect all users to home page after login
+          navigate('/');
+        } else {
+          // Fallback to hotel page if we can't determine role
+          navigate('/hotelpage');
+        }
       } else {
-        navigate('/hotelpage');
+        setErrors(prev => ({ ...prev, general: result.error }));
       }
 
     } catch (error) {
