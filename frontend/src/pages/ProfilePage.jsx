@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { User, Mail, Phone, Save, Edit, ArrowLeft, CheckCircle, AlertCircle } from 'lucide-react';
+import { User, Mail, Phone, Save, Edit, ArrowLeft, CheckCircle, AlertCircle, Lock, Eye, EyeOff } from 'lucide-react';
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -18,6 +18,19 @@ const ProfilePage = () => {
   });
 
   const [errors, setErrors] = useState({});
+
+  // Password change state
+  const [showPasswordChange, setShowPasswordChange] = useState(false);
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  });
+  const [passwordErrors, setPasswordErrors] = useState({});
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -124,6 +137,105 @@ const ProfilePage = () => {
     }
     setIsEditing(false);
     setErrors({});
+    setMessage({ type: '', text: '' });
+  };
+
+  // Password change handlers
+  const handlePasswordInputChange = (e) => {
+    const { name, value } = e.target;
+    setPasswordData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    
+    // Clear error when user starts typing
+    if (passwordErrors[name]) {
+      setPasswordErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
+  };
+
+  const validatePasswordForm = () => {
+    const newErrors = {};
+
+    if (!passwordData.currentPassword.trim()) {
+      newErrors.currentPassword = 'Current password is required';
+    }
+
+    if (!passwordData.newPassword.trim()) {
+      newErrors.newPassword = 'New password is required';
+    } else if (passwordData.newPassword.length < 6) {
+      newErrors.newPassword = 'New password must be at least 6 characters long';
+    }
+
+    if (!passwordData.confirmPassword.trim()) {
+      newErrors.confirmPassword = 'Please confirm your new password';
+    } else if (passwordData.newPassword !== passwordData.confirmPassword) {
+      newErrors.confirmPassword = 'Passwords do not match';
+    }
+
+    return newErrors;
+  };
+
+  const handlePasswordChange = async () => {
+    const validationErrors = validatePasswordForm();
+    
+    if (Object.keys(validationErrors).length > 0) {
+      setPasswordErrors(validationErrors);
+      return;
+    }
+
+    setIsChangingPassword(true);
+    setMessage({ type: '', text: '' });
+
+    try {
+      const response = await fetch('http://localhost:8080/api/auth/change-password', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          currentPassword: passwordData.currentPassword,
+          newPassword: passwordData.newPassword
+        })
+      });
+
+      if (response.ok) {
+        setMessage({ type: 'success', text: 'Password changed successfully!' });
+        setPasswordData({
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: ''
+        });
+        setShowPasswordChange(false);
+        setPasswordErrors({});
+        
+        // Clear success message after 3 seconds
+        setTimeout(() => {
+          setMessage({ type: '', text: '' });
+        }, 3000);
+      } else {
+        const errorText = await response.text();
+        setMessage({ type: 'error', text: errorText || 'Failed to change password' });
+      }
+    } catch (error) {
+      setMessage({ type: 'error', text: 'Network error. Please try again.' });
+    } finally {
+      setIsChangingPassword(false);
+    }
+  };
+
+  const handleCancelPasswordChange = () => {
+    setPasswordData({
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: ''
+    });
+    setShowPasswordChange(false);
+    setPasswordErrors({});
     setMessage({ type: '', text: '' });
   };
 
@@ -327,6 +439,145 @@ const ProfilePage = () => {
                   )}
                   Save Changes
                 </button>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Password Change Section */}
+        <div className="bg-white shadow rounded-lg mt-8">
+          <div className="px-6 py-8">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-xl font-semibold text-gray-900">Change Password</h2>
+                <p className="text-gray-600 mt-1">Update your account password</p>
+              </div>
+              
+              {!showPasswordChange && (
+                <button
+                  onClick={() => setShowPasswordChange(true)}
+                  className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  <Lock className="h-4 w-4 mr-2" />
+                  Change Password
+                </button>
+              )}
+            </div>
+
+            {showPasswordChange && (
+              <div className="space-y-6">
+                {/* Current Password */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Current Password
+                  </label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                    <input
+                      type={showCurrentPassword ? "text" : "password"}
+                      name="currentPassword"
+                      value={passwordData.currentPassword}
+                      onChange={handlePasswordInputChange}
+                      className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
+                        passwordErrors.currentPassword ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300'
+                      }`}
+                      placeholder="Enter your current password"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    >
+                      {showCurrentPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                    </button>
+                  </div>
+                  {passwordErrors.currentPassword && (
+                    <p className="mt-1 text-sm text-red-600">{passwordErrors.currentPassword}</p>
+                  )}
+                </div>
+
+                {/* New Password */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    New Password
+                  </label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                    <input
+                      type={showNewPassword ? "text" : "password"}
+                      name="newPassword"
+                      value={passwordData.newPassword}
+                      onChange={handlePasswordInputChange}
+                      className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
+                        passwordErrors.newPassword ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300'
+                      }`}
+                      placeholder="Enter your new password"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowNewPassword(!showNewPassword)}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    >
+                      {showNewPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                    </button>
+                  </div>
+                  {passwordErrors.newPassword && (
+                    <p className="mt-1 text-sm text-red-600">{passwordErrors.newPassword}</p>
+                  )}
+                </div>
+
+                {/* Confirm New Password */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Confirm New Password
+                  </label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                    <input
+                      type={showConfirmPassword ? "text" : "password"}
+                      name="confirmPassword"
+                      value={passwordData.confirmPassword}
+                      onChange={handlePasswordInputChange}
+                      className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
+                        passwordErrors.confirmPassword ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300'
+                      }`}
+                      placeholder="Confirm your new password"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    >
+                      {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                    </button>
+                  </div>
+                  {passwordErrors.confirmPassword && (
+                    <p className="mt-1 text-sm text-red-600">{passwordErrors.confirmPassword}</p>
+                  )}
+                </div>
+
+                {/* Password Change Action Buttons */}
+                <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+                  <button
+                    onClick={handleCancelPasswordChange}
+                    disabled={isChangingPassword}
+                    className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handlePasswordChange}
+                    disabled={isChangingPassword}
+                    className="flex items-center px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+                  >
+                    {isChangingPassword ? (
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    ) : (
+                      <Lock className="h-4 w-4 mr-2" />
+                    )}
+                    Change Password
+                  </button>
+                </div>
               </div>
             )}
           </div>

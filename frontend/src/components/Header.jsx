@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Menu, X, LogOut, User, Shield, Settings } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Menu, X, LogOut, User, Shield, Settings, ChevronDown } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
@@ -8,6 +8,8 @@ const Header = () => {
   const location = useLocation();
   const { isAuthenticated, user, logout } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+  const userDropdownRef = useRef(null);
 
   // Helper function to check if a path is active
   const isActive = (path) => {
@@ -21,6 +23,20 @@ const Header = () => {
     await logout();
     navigate('/');
   };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (userDropdownRef.current && !userDropdownRef.current.contains(event.target)) {
+        setIsUserDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   return (
     <header className="bg-white/90 backdrop-blur-lg shadow-sm sticky top-0 z-50">
@@ -100,36 +116,46 @@ const Header = () => {
               </button>
             </>
           ) : (
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
-                <User className="w-5 h-5 text-gray-600" />
-                <span className="text-gray-700 font-medium">
+            <div className="relative" ref={userDropdownRef}>
+              <button
+                onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
+                className="flex items-center space-x-2 px-4 py-2 rounded-xl text-blue-600 border border-blue-600 hover:bg-blue-50 transition-colors"
+              >
+                <User className="w-5 h-5" />
+                <span className="font-medium">
                   {user?.firstName || user?.username || 'User'}
                 </span>
-              </div>
-              <button
-                onClick={() => navigate('/profile')}
-                className="px-4 py-2 rounded-xl text-blue-600 border border-blue-600 hover:bg-blue-50 transition-colors flex items-center space-x-2"
-              >
-                <Settings className="w-4 h-4" />
-                <span>Profile</span>
+                <ChevronDown className={`w-4 h-4 transition-transform ${isUserDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
-              {(user?.roles?.includes('ADMIN') || user?.roles?.includes('ROLE_ADMIN')) && (
-                <button
-                  onClick={() => navigate('/admin/dashboard')}
-                  className="px-4 py-2 rounded-xl text-red-600 border border-red-600 hover:bg-red-50 transition-colors flex items-center space-x-2"
-                >
-                  <Shield className="w-4 h-4" />
-                  <span>Admin</span>
-                </button>
+              
+              {isUserDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                  <button
+                    onClick={() => { navigate('/profile'); setIsUserDropdownOpen(false); }}
+                    className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-50 transition-colors flex items-center space-x-2"
+                  >
+                    <Settings className="w-4 h-4" />
+                    <span>Profile</span>
+                  </button>
+                  {(user?.roles?.includes('ADMIN') || user?.roles?.includes('ROLE_ADMIN')) && (
+                    <button
+                      onClick={() => { navigate('/admin/dashboard'); setIsUserDropdownOpen(false); }}
+                      className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-50 transition-colors flex items-center space-x-2"
+                    >
+                      <Shield className="w-4 h-4" />
+                      <span>Admin</span>
+                    </button>
+                  )}
+                  <div className="border-t border-gray-200 my-1"></div>
+                  <button
+                    onClick={() => { handleLogout(); setIsUserDropdownOpen(false); }}
+                    className="w-full px-4 py-2 text-left text-red-600 hover:bg-red-50 transition-colors flex items-center space-x-2"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    <span>Logout</span>
+                  </button>
+                </div>
               )}
-              <button
-                onClick={handleLogout}
-                className="px-4 py-2 rounded-xl text-red-600 border border-red-600 hover:bg-red-50 transition-colors flex items-center space-x-2"
-              >
-                <LogOut className="w-4 h-4" />
-                <span>Logout</span>
-              </button>
             </div>
           )}
         </div>
@@ -225,6 +251,15 @@ const Header = () => {
                   <Settings className="w-4 h-4" />
                   <span>Profile</span>
                 </button>
+                {(user?.roles?.includes('ADMIN') || user?.roles?.includes('ROLE_ADMIN')) && (
+                  <button
+                    onClick={() => { navigate('/admin/dashboard'); setIsMobileMenuOpen(false); }}
+                    className="w-full px-5 py-2 rounded-xl text-gray-600 border border-gray-600 hover:bg-gray-50 transition-colors flex items-center justify-center space-x-2"
+                  >
+                    <Shield className="w-4 h-4" />
+                    <span>Admin</span>
+                  </button>
+                )}
                 <button
                   onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }}
                   className="w-full px-5 py-2 rounded-xl text-red-600 border border-red-600 hover:bg-red-50 transition-colors flex items-center justify-center space-x-2"
