@@ -4,6 +4,7 @@ import edu.cit.onlineHotelResrv.Entity.Role;
 import edu.cit.onlineHotelResrv.Entity.User;
 import edu.cit.onlineHotelResrv.dto.LoginRequest;
 import edu.cit.onlineHotelResrv.dto.LoginResponse;
+import edu.cit.onlineHotelResrv.dto.PasswordChangeRequest;
 import edu.cit.onlineHotelResrv.dto.ProfileUpdateRequest;
 import edu.cit.onlineHotelResrv.dto.SignupRequest;
 import edu.cit.onlineHotelResrv.dto.SignupResponse;
@@ -204,5 +205,44 @@ public class AuthController {
                     .toList(),
             user.isEnabled()
         ));
+    }
+
+    @PutMapping("/change-password")
+    public ResponseEntity<?> changePassword(
+            @RequestBody PasswordChangeRequest request,
+            Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        User user = userRepository.findByUsername(authentication.getName())
+                .orElse(null);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        // Verify current password
+        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+            return ResponseEntity.badRequest()
+                    .body("Current password is incorrect");
+        }
+
+        // Validate new password
+        if (request.getNewPassword() == null || request.getNewPassword().trim().isEmpty()) {
+            return ResponseEntity.badRequest()
+                    .body("New password cannot be empty");
+        }
+
+        if (request.getNewPassword().length() < 6) {
+            return ResponseEntity.badRequest()
+                    .body("New password must be at least 6 characters long");
+        }
+
+        // Update password
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+
+        return ResponseEntity.ok("Password changed successfully");
     }
 }

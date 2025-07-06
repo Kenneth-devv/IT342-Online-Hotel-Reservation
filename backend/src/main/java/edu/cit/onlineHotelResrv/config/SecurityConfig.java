@@ -1,6 +1,5 @@
 package edu.cit.onlineHotelResrv.config;
 
-import edu.cit.onlineHotelResrv.security.CustomUserDetailsService;
 import edu.cit.onlineHotelResrv.security.JsonUsernamePasswordAuthenticationFilter;
 import edu.cit.onlineHotelResrv.security.OAuth2LoginSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +24,6 @@ import java.util.Collections;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
-    @Autowired
-    private CustomUserDetailsService userDetailsService;
 
     @Autowired
     private OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
