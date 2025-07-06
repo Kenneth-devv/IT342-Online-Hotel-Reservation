@@ -11,6 +11,9 @@ import AboutUs from './pages/AboutUs';
 import BookingPage from './pages/BookingPage';
 import SearchResultsPage from './pages/SearchResultsPage';
 import AdminDashboard from './pages/AdminDashboard';
+import ProfilePage from './pages/ProfilePage';
+
+
 
 const App = () => {
   return (
@@ -47,18 +50,30 @@ const App = () => {
               <BookingPage />
             </ProtectedRoute>
           } />
-
+          
           <Route path="/search-results" element={
             <ProtectedRoute>
               <SearchResultsPage />
             </ProtectedRoute>
           } />
+          <Route
+            path="/admin/dashboard"
+            element={
+              <ProtectedRoute>
+                <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
 
-          <Route path="/admin/dashboard" element={
-            <ProtectedRoute>
-              <AdminDashboard />
-            </ProtectedRoute>
-          } />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <ProfilePage />
+              </ProtectedRoute>
+            }
+          />
+
         </Routes>
       </Router>
     </AuthProvider>
