@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
 
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
@@ -14,31 +15,33 @@ import SearchResultsPage from './pages/SearchResultsPage';
 const App = () => {
   return (
     <Router>
-      <Routes>
-        {/* Default route: When the user lands on the root path ("/"), they will see the HomePage */}
-        <Route path="/" element={<HomePage />} />
+      <AuthProvider>
+        <Routes>
+          {/* Default route: When the user lands on the root path ("/"), they will see the HomePage */}
+          <Route path="/" element={<HomePage />} />
 
-        {/* Route for the Login page */}
-        <Route path="/login" element={<LoginPage />} />
+          {/* Route for the Login page */}
+          <Route path="/login" element={<LoginPage />} />
 
-        {/*
-          Route for the Signup page.
-          Path changed to '/signup' for consistency with internal navigation
-          in LoginPage and SignupPage components.
-        */}
-        <Route path="/signup" element={<SignupPage />} />
+          {/*
+            Route for the Signup page.
+            Path changed to '/signup' for consistency with internal navigation
+            in LoginPage and SignupPage components.
+          */}
+          <Route path="/signup" element={<SignupPage />} />
 
-        {/* Route for the Hotel Page */}
-        <Route path="/hotelpage" element={<HotelPage />} />
+          {/* Route for the Hotel Page */}
+          <Route path="/hotelpage" element={<HotelPage />} />
 
-        <Route path="/aboutus" element={<AboutUs />} />
+          <Route path="/aboutus" element={<AboutUs />} />
 
-        <Route path="/bookingpage/:hotelId" element={<BookingPage />} />
-        
-        {/* Route for the Search Results Page */}
-        <Route path="/search-results" element={<SearchResultsPage />} />
+          <Route path="/bookingpage/:hotelId" element={<BookingPage />} />
 
-      </Routes>
+          {/* Route for the Search Results Page */}
+          <Route path="/search-results" element={<SearchResultsPage />} />
+
+        </Routes>
+      </AuthProvider>
     </Router>
   );
 };

@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Search, Calendar, Users, MapPin, Star, Award, ShieldCheck, Headphones, Facebook, Twitter, Instagram, Linkedin, Plus, Minus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import backgroundIMG from '../assets/images/backgroundIMG.jpg';
-import Header from '../components/Header';
+import Header from '../components/Header'; // Import the new Header component
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -92,6 +92,49 @@ const HomePage = () => {
     return `${roomText}, ${adultText}${childrenText}`;
   };
 
+  // Dummy hotel data from HotelPage.jsx, adapted for HomePage's featuredHotels structure
+  const luxuriousGrandHotelCebu = {
+    id: 5, // Assign a new unique ID
+    name: 'Luxurious Grand Hotel Cebu',
+    location: 'Cebu City, Cebu - City center, near Ayala Center',
+    price: '₱9,500', // Formatted price string
+    image: 'https://placehold.co/600x400/4F46E5/FFFFFF?text=Grand+Hotel+Exterior', // Using mainImage as image
+    description: 'Experience unparalleled luxury and comfort at the Grand Hotel Cebu. Located in the heart of the city, our hotel offers exquisite rooms, world-class dining, and exceptional service. Perfect for both business and leisure travelers.',
+    rating: 4.9, // Changed from 9.1 to 4.9 as requested
+    reviews: 2500,
+    mainImage: 'https://placehold.co/1200x600/4F46E5/FFFFFF?text=Grand+Hotel+Exterior',
+    galleryImages: [
+      'https://placehold.co/400x300/3730A3/FFFFFF?text=Lobby',
+      'https://placehold.co/400x300/1E293B/FFFFFF?text=Room',
+      'https://placehold.co/400x300/1D4ED8/FFFFFF?text=Pool',
+      'https://placehold.co/400x300/2563EB/FFFFFF?text=Restaurant',
+      'https://placehold.co/400x300/3B82F6/FFFFFF?text=Spa',
+    ],
+    amenities: [
+      'Free WiFi',
+      'Swimming Pool',
+      'Gym/Fitness Center',
+      'Restaurant',
+      'Bar/Lounge',
+      'Free Parking',
+      'Air conditioning',
+      '24-hour front desk',
+      'Spa services',
+      'Room service',
+      'Breakfast included',
+      'Concierge service'
+    ],
+    pricePerNight: 9500,
+    currency: '₱',
+    checkInTime: '3:00 PM',
+    checkOutTime: '12:00 PM',
+    contact: {
+      phone: '+63 912 345 6789',
+      email: 'info@grandhotel.com'
+    }
+  };
+
+
   const featuredHotels = [
     {
       id: 1,
@@ -100,16 +143,31 @@ const HomePage = () => {
       price: '₱8,500',
       image: 'https://placehold.co/600x400/A78BFA/FFFFFF?text=Hyatt+Manila',
       description: 'Experience luxury and comfort in the heart of the city. Enjoy our world-class amenities and exceptional service for an unforgettable stay.',
-      rating: 4.8
-    },
-    {
-      id: 2,
-      name: 'The Peninsula Manila',
-      location: 'Makati Avenue, Makati',
-      price: '₱10,200',
-      image: 'https://placehold.co/600x400/818CF8/FFFFFF?text=Peninsula+Manila',
-      description: 'An iconic hotel known for its timeless elegance and service. A perfect blend of classic charm and modern sophistication.',
-      rating: 4.9
+      rating: 4.8,
+      reviews: 1500,
+      mainImage: 'https://placehold.co/1200x600/A78BFA/FFFFFF?text=Grand+Hyatt+Exterior',
+      galleryImages: [
+        'https://placehold.co/400x300/818CF8/FFFFFF?text=Hyatt+Lobby',
+        'https://placehold.co/400x300/6366F1/FFFFFF?text=Hyatt+Room',
+        'https://placehold.co/400x300/4F46E5/FFFFFF?text=Hyatt+Pool',
+      ],
+      amenities: [
+        'Free WiFi',
+        'Swimming Pool',
+        'Gym/Fitness Center',
+        'Restaurant',
+        'Bar/Lounge',
+        'Valet Parking',
+        'Concierge service'
+      ],
+      pricePerNight: 8500,
+      currency: '₱',
+      checkInTime: '3:00 PM',
+      checkOutTime: '12:00 PM',
+      contact: {
+        phone: '+63 2 838 1234',
+        email: 'info@grandhyatt.com'
+      }
     },
     {
       id: 3,
@@ -118,7 +176,31 @@ const HomePage = () => {
       price: '₱9,800',
       image: 'https://placehold.co/600x400/6366F1/FFFFFF?text=Shangri-La+Fort',
       description: 'Modern luxury with extensive dining and recreational facilities. Ideal for both business and leisure travelers seeking comfort.',
-      rating: 4.6
+      rating: 4.6,
+      reviews: 2000,
+      mainImage: 'https://placehold.co/1200x600/6366F1/FFFFFF?text=Shangri-La+Fort+Exterior',
+      galleryImages: [
+        'https://placehold.co/400x300/4F46E5/FFFFFF?text=Shangri-La+Lobby',
+        'https://placehold.co/400x300/3730A3/FFFFFF?text=Shangri-La+Room',
+        'https://placehold.co/400x300/1E293B/FFFFFF?text=Shangri-La+Spa',
+      ],
+      amenities: [
+        'Free WiFi',
+        'Swimming Pool',
+        'Gym/Fitness Center',
+        'Multiple Restaurants',
+        'Kids Club',
+        'Spa services',
+        'Business Center'
+      ],
+      pricePerNight: 9800,
+      currency: '₱',
+      checkInTime: '3:00 PM',
+      checkOutTime: '12:00 PM',
+      contact: {
+        phone: '+63 2 8820 0888',
+        email: 'info@shangrila.com'
+      }
     },
     {
       id: 4,
@@ -127,8 +209,33 @@ const HomePage = () => {
       price: '₱7,900',
       image: 'https://placehold.co/600x400/4F46E5/FFFFFF?text=Conrad+Manila',
       description: 'Waterfront luxury with stunning views of Manila Bay. Enjoy exquisite dining, a serene spa, and direct access to premier shopping.',
-      rating: 4.7
-    }
+      rating: 4.7,
+      reviews: 1800,
+      mainImage: 'https://placehold.co/1200x600/4F46E5/FFFFFF?text=Conrad+Manila+Exterior',
+      galleryImages: [
+        'https://placehold.co/400x300/1D4ED8/FFFFFF?text=Conrad+Lobby',
+        'https://placehold.co/400x300/2563EB/FFFFFF?text=Conrad+Room',
+        'https://placehold.co/400x300/3B82F6/FFFFFF?text=Conrad+Bay+View',
+      ],
+      amenities: [
+        'Free WiFi',
+        'Infinity Pool',
+        'Spa services',
+        'Restaurant',
+        'Bar/Lounge',
+        'Direct Mall Access',
+        '24-hour front desk'
+      ],
+      pricePerNight: 7900,
+      currency: '₱',
+      checkInTime: '3:00 PM',
+      checkOutTime: '12:00 PM',
+      contact: {
+        phone: '+63 2 8833 9999',
+        email: 'info@conradmanila.com'
+      }
+    },
+    luxuriousGrandHotelCebu // Added the new hotel here, making it 4 hotels total
   ];
 
   return (
@@ -146,9 +253,7 @@ const HomePage = () => {
           <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto drop-shadow-md">
             Discover amazing hotels and experiences tailored just for you.
           </p>
-          <button className="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-full shadow-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 transform hover:scale-105">
-            Explore Hotels
-          </button>
+          {/* Removed the "Explore Hotels" button */}
         </div>
       </section>
 
@@ -326,7 +431,11 @@ const HomePage = () => {
           <h2 className="text-4xl font-bold text-center mb-12 text-gray-900">Our Featured Hotels</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {featuredHotels.map(hotel => (
-              <div key={hotel.id} className="bg-white rounded-3xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-100 flex flex-col">
+              <div
+                key={hotel.id}
+                className="bg-white rounded-3xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-100 flex flex-col cursor-pointer"
+                onClick={() => navigate('/hotelpage', { state: { hotel: hotel } })} // Navigate to HotelPage with hotel data
+              >
                 <img src={hotel.image} alt={hotel.name} className="w-full h-48 object-cover rounded-t-3xl" />
                 <div className="p-6 flex flex-col flex-grow">
                   <h3 className="text-xl font-semibold text-gray-900 mb-2 text-center">{hotel.name}</h3>
@@ -341,7 +450,13 @@ const HomePage = () => {
                       <Star className="w-5 h-5 text-yellow-400 fill-current" />
                     </div>
                   </div>
-                  <button className="mt-6 w-full px-4 py-3 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-colors font-medium shadow-md">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent card onClick from firing
+                      navigate('/hotelpage', { state: { hotel: hotel } });
+                    }}
+                    className="mt-6 w-full px-4 py-3 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-colors font-medium shadow-md"
+                  >
                     View Details
                   </button>
                 </div>
@@ -349,7 +464,10 @@ const HomePage = () => {
             ))}
           </div>
           <div className="text-center mt-12">
-            <button className="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-full shadow-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 transform hover:scale-105">
+            <button
+              onClick={() => navigate('/search-results')} // Redirect to SearchResultsPage
+              className="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-full shadow-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 transform hover:scale-105"
+            >
               See More Hotels
             </button>
           </div>
