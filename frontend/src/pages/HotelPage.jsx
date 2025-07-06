@@ -2,7 +2,7 @@ import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 // Importing necessary icons, added Clock
 import { MapPin, Star, Wifi, Coffee, Car, Dumbbell, Snowflake, CheckCircle, Clock } from 'lucide-react';
-import Header from '../components/Header'; // Assuming you have a Header component
+import Header from '../components/Header';
 
 const HotelPage = () => {
   const location = useLocation();

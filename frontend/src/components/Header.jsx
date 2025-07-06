@@ -1,41 +1,22 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { Menu, X, UserCircle } from 'lucide-react';
-import { useNavigate, Link } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext';
+import React, { useState } from 'react';
+import { Menu, X, LogOut, User, Shield } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const Header = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { isAuthenticated, user, logout } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const { isLoggedIn, userFullName, isLoadingAuth, checkLoginStatus } = useContext(AuthContext);
-
-  const handleLogout = async () => {
-    try {
-      const response = await fetch('http://localhost:8080/api/auth/logout', {
-        method: 'POST',
-        credentials: 'include',
-      });
-
-      if (response.ok) {
-        console.log("Logged out successfully from backend.");
-        checkLoginStatus();
-        navigate('/login');
-      } else {
-        const errorData = await response.text();
-        console.error("Backend logout failed:", errorData);
-        checkLoginStatus();
-        navigate('/login');
-      }
-    } catch (error) {
-      console.error("Error during logout:", error);
-      checkLoginStatus();
-      navigate('/login');
-    }
+  const isActive = (path) => {
+    if (path === '/') return location.pathname === '/';
+    return location.pathname.startsWith(path);
   };
 
-  const handleNavLinkClick = (path) => {
-    navigate(path);
-    setIsMobileMenuOpen(false);
+  const handleLogout = async () => {
+    await logout();
+    navigate('/');
   };
 
   return (
@@ -43,52 +24,41 @@ const Header = () => {
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         {/* Logo */}
         <div className="flex items-center space-x-2">
-          <Link to="/" className="text-2xl font-bold text-gray-900 hover:text-blue-600 transition-colors">Bright Hotel</Link>
+          <button onClick={() => navigate('/')} className="text-2xl font-bold text-gray-900 hover:text-blue-600 transition-colors">Bright Hotel</button>
         </div>
 
-        {/* Desktop Navigation */}
+        {/* Desktop Nav */}
         <nav className="hidden md:flex space-x-8">
-          <Link to="/" className="text-gray-600 hover:text-blue-600 font-medium transition-colors">Home</Link>
-          {/* Updated path for Hotels */}
-          <Link to="/search-results" className="text-gray-600 hover:text-blue-600 font-medium transition-colors">Hotels</Link>
-          {/* Keeping /deals as a placeholder, assuming a future route */}
-          <Link to="/deals" className="text-gray-600 hover:text-blue-600 font-medium transition-colors">Deals</Link>
-          {/* Updated path for About Us */}
-          <Link to="/aboutus" className="text-gray-600 hover:text-blue-600 font-medium transition-colors">About Us</Link>
-          {/* Keeping /contact as a placeholder, assuming a future route */}
-          <Link to="/contact" className="text-gray-600 hover:text-blue-600 font-medium transition-colors">Contact</Link>
+          <button onClick={() => navigate('/')} disabled={isActive('/')} className={`font-medium transition-colors ${isActive('/') ? 'text-blue-600 cursor-default' : 'text-gray-600 hover:text-blue-600'}`}>Home</button>
+          <button onClick={() => navigate('/hotelpage')} disabled={isActive('/hotelpage')} className={`font-medium transition-colors ${isActive('/hotelpage') ? 'text-blue-600 cursor-default' : 'text-gray-600 hover:text-blue-600'}`}>Hotels</button>
+          <button onClick={() => navigate('/search-results')} disabled={isActive('/search-results')} className={`font-medium transition-colors ${isActive('/search-results') ? 'text-blue-600 cursor-default' : 'text-gray-600 hover:text-blue-600'}`}>Search</button>
+          <button onClick={() => navigate('/aboutus')} disabled={isActive('/aboutus')} className={`font-medium transition-colors ${isActive('/aboutus') ? 'text-blue-600 cursor-default' : 'text-gray-600 hover:text-blue-600'}`}>About Us</button>
         </nav>
 
-        {/* Auth Buttons / User Info */}
-        <div className="hidden md:flex items-center space-x-4">
-          {isLoadingAuth ? (
-            <div className="w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-          ) : isLoggedIn ? (
+        {/* Auth Buttons */}
+        <div className="hidden md:flex space-x-4">
+          {!isAuthenticated ? (
             <>
-              <UserCircle className="w-6 h-6 text-blue-600" />
-              <span className="text-gray-700 font-semibold">{userFullName}</span>
-              <button
-                onClick={handleLogout}
-                className="px-5 py-2 rounded-xl text-red-600 border border-red-600 hover:bg-red-50 transition-colors"
-              >
-                Logout
-              </button>
+              <button onClick={() => navigate('/login')} className="px-5 py-2 rounded-xl text-blue-600 border border-blue-600 hover:bg-blue-50 transition-colors">Login</button>
+              <button onClick={() => navigate('/signup')} className="px-5 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition-colors shadow-md">Sign Up</button>
             </>
           ) : (
-            <>
-              <button
-                onClick={() => navigate('/login')}
-                className="px-5 py-2 rounded-xl text-blue-600 border border-blue-600 hover:bg-blue-50 transition-colors"
-              >
-                Login
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2">
+                <User className="w-5 h-5 text-gray-600" />
+                <span className="text-gray-700 font-medium">{user?.firstName || user?.username || 'User'}</span>
+              </div>
+              {(user?.roles?.includes('ADMIN') || user?.roles?.includes('ROLE_ADMIN')) && (
+                <button onClick={() => navigate('/admin/dashboard')} className="px-4 py-2 rounded-xl text-red-600 border border-red-600 hover:bg-red-50 transition-colors flex items-center space-x-2">
+                  <Shield className="w-4 h-4" />
+                  <span>Admin</span>
+                </button>
+              )}
+              <button onClick={handleLogout} className="px-4 py-2 rounded-xl text-red-600 border border-red-600 hover:bg-red-50 transition-colors flex items-center space-x-2">
+                <LogOut className="w-4 h-4" />
+                <span>Logout</span>
               </button>
-              <button
-                onClick={() => navigate('/signup')}
-                className="px-5 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition-colors shadow-md"
-              >
-                Sign Up
-              </button>
-            </>
+            </div>
           )}
         </div>
 
@@ -100,48 +70,37 @@ const Header = () => {
         </div>
       </div>
 
-      {/* Mobile Menu Overlay */}
+      {/* Mobile Nav */}
       {isMobileMenuOpen && (
         <div className="md:hidden absolute top-full left-0 w-full bg-white/95 backdrop-blur-lg shadow-lg py-4 transition-all duration-300 ease-in-out">
           <nav className="flex flex-col items-center space-y-4">
-            <Link to="/" onClick={() => handleNavLinkClick('/')} className="text-gray-700 hover:text-blue-600 font-medium text-lg py-2">Home</Link>
-            {/* Updated path for Hotels in mobile menu */}
-            <Link to="/search-results" onClick={() => handleNavLinkClick('/search-results')} className="text-gray-700 hover:text-blue-600 font-medium text-lg py-2">Hotels</Link>
-            <Link to="/deals" onClick={() => handleNavLinkClick('/deals')} className="text-gray-700 hover:text-blue-600 font-medium text-lg py-2">Deals</Link>
-            {/* Updated path for About Us in mobile menu */}
-            <Link to="/aboutus" onClick={() => handleNavLinkClick('/aboutus')} className="text-gray-700 hover:text-blue-600 font-medium text-lg py-2">About Us</Link>
-            <Link to="/contact" onClick={() => handleNavLinkClick('/contact')} className="text-gray-700 hover:text-blue-600 font-medium text-lg py-2">Contact</Link>
+            {['/', '/hotelpage', '/search-results', '/aboutus'].map((path) => (
+              <button
+                key={path}
+                onClick={() => { !isActive(path) && navigate(path); setIsMobileMenuOpen(false); }}
+                disabled={isActive(path)}
+                className={`font-medium text-lg py-2 ${isActive(path) ? 'text-blue-600 cursor-default' : 'text-gray-700 hover:text-blue-600'}`}
+              >
+                {path === '/' ? 'Home' : path.replace('/', '').replace('-', ' ').replace(/\b\w/g, c => c.toUpperCase())}
+              </button>
+            ))}
             <div className="w-full border-t border-gray-200 my-2"></div>
-            {isLoadingAuth ? (
-              <div className="w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-            ) : isLoggedIn ? (
+            {!isAuthenticated ? (
               <>
-                <div className="flex items-center space-x-2 text-gray-700 font-semibold text-lg py-2">
-                  <UserCircle className="w-6 h-6 text-blue-600" />
-                  <span>{userFullName}</span>
-                </div>
-                <button
-                  onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }}
-                  className="w-4/5 px-5 py-2 rounded-xl text-red-600 border border-red-600 hover:bg-red-50 transition-colors"
-                >
-                  Logout
-                </button>
+                <button onClick={() => { navigate('/login'); setIsMobileMenuOpen(false); }} className="w-4/5 px-5 py-2 rounded-xl text-blue-600 border border-blue-600 hover:bg-blue-50 transition-colors">Login</button>
+                <button onClick={() => { navigate('/signup'); setIsMobileMenuOpen(false); }} className="w-4/5 px-5 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition-colors shadow-md">Sign Up</button>
               </>
             ) : (
-              <>
-                <button
-                  onClick={() => handleNavLinkClick('/login')}
-                  className="w-4/5 px-5 py-2 rounded-xl text-blue-600 border border-blue-600 hover:bg-blue-50 transition-colors"
-                >
-                  Login
+              <div className="w-4/5 space-y-2">
+                <div className="flex items-center justify-center space-x-2 py-2">
+                  <User className="w-5 h-5 text-gray-600" />
+                  <span className="text-gray-700 font-medium">{user?.firstName || user?.username || 'User'}</span>
+                </div>
+                <button onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }} className="w-full px-5 py-2 rounded-xl text-red-600 border border-red-600 hover:bg-red-50 transition-colors flex items-center justify-center space-x-2">
+                  <LogOut className="w-4 h-4" />
+                  <span>Logout</span>
                 </button>
-                <button
-                  onClick={() => handleNavLinkClick('/signup')}
-                  className="w-4/5 px-5 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition-colors shadow-md"
-                >
-                  Sign Up
-                </button>
-              </>
+              </div>
             )}
           </nav>
         </div>
