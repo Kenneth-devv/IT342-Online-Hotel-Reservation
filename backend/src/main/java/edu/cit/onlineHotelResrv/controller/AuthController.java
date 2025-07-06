@@ -4,6 +4,7 @@ import edu.cit.onlineHotelResrv.Entity.Role;
 import edu.cit.onlineHotelResrv.Entity.User;
 import edu.cit.onlineHotelResrv.dto.LoginRequest;
 import edu.cit.onlineHotelResrv.dto.LoginResponse;
+import edu.cit.onlineHotelResrv.dto.ProfileUpdateRequest;
 import edu.cit.onlineHotelResrv.dto.SignupRequest;
 import edu.cit.onlineHotelResrv.dto.SignupResponse;
 import edu.cit.onlineHotelResrv.dto.UserInfoResponse;
@@ -118,6 +119,78 @@ public class AuthController {
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
         }
+
+        return ResponseEntity.ok(new UserInfoResponse(
+            user.getId(),
+            user.getUsername(),
+            user.getEmail(),
+            user.getFirstName(),
+            user.getLastName(),
+            user.getPhone(),
+            authentication.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .toList(),
+            user.isEnabled()
+        ));
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<UserInfoResponse> getProfile(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        User user = userRepository.findByUsername(authentication.getName())
+                .orElse(null);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        return ResponseEntity.ok(new UserInfoResponse(
+            user.getId(),
+            user.getUsername(),
+            user.getEmail(),
+            user.getFirstName(),
+            user.getLastName(),
+            user.getPhone(),
+            authentication.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .toList(),
+            user.isEnabled()
+        ));
+    }
+
+    @PutMapping("/profile")
+    public ResponseEntity<?> updateProfile(
+            @RequestBody ProfileUpdateRequest request,
+            Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        User user = userRepository.findByUsername(authentication.getName())
+                .orElse(null);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        // Check if email is already taken by another user
+        if (!user.getEmail().equals(request.getEmail())) {
+            if (userRepository.existsByEmail(request.getEmail())) {
+                return ResponseEntity.badRequest()
+                        .body("Email is already in use by another user");
+            }
+        }
+
+        // Update user information
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
+        user.setEmail(request.getEmail());
+        user.setPhone(request.getPhone());
+
+        userRepository.save(user);
 
         return ResponseEntity.ok(new UserInfoResponse(
             user.getId(),

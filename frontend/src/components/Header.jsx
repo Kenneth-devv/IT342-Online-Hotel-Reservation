@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Menu, X, LogOut, User, Shield } from 'lucide-react';
+import { Menu, X, LogOut, User, Shield, Settings } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
@@ -107,6 +107,13 @@ const Header = () => {
                   {user?.firstName || user?.username || 'User'}
                 </span>
               </div>
+              <button
+                onClick={() => navigate('/profile')}
+                className="px-4 py-2 rounded-xl text-blue-600 border border-blue-600 hover:bg-blue-50 transition-colors flex items-center space-x-2"
+              >
+                <Settings className="w-4 h-4" />
+                <span>Profile</span>
+              </button>
               {(user?.roles?.includes('ADMIN') || user?.roles?.includes('ROLE_ADMIN')) && (
                 <button
                   onClick={() => navigate('/admin/dashboard')}
@@ -211,6 +218,13 @@ const Header = () => {
                     {user?.firstName || user?.username || 'User'}
                   </span>
                 </div>
+                <button
+                  onClick={() => { navigate('/profile'); setIsMobileMenuOpen(false); }}
+                  className="w-full px-5 py-2 rounded-xl text-blue-600 border border-blue-600 hover:bg-blue-50 transition-colors flex items-center justify-center space-x-2"
+                >
+                  <Settings className="w-4 h-4" />
+                  <span>Profile</span>
+                </button>
                 <button
                   onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }}
                   className="w-full px-5 py-2 rounded-xl text-red-600 border border-red-600 hover:bg-red-50 transition-colors flex items-center justify-center space-x-2"

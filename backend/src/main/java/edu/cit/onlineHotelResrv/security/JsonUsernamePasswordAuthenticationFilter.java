@@ -14,6 +14,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import java.io.IOException;
 import java.util.Map;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 @Slf4j
 @AllArgsConstructor
@@ -25,7 +26,7 @@ public class JsonUsernamePasswordAuthenticationFilter extends UsernamePasswordAu
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) {
         try {
-            Map<String, String> credentials = objectMapper.readValue(request.getInputStream(), Map.class);
+            Map<String, String> credentials = objectMapper.readValue(request.getInputStream(), new TypeReference<Map<String, String>>() {});
             String username = credentials.get("username");
             String password = credentials.get("password");
 
