@@ -1,56 +1,64 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Search, MapPin, Star, ChevronDown, SlidersHorizontal, Wifi, Coffee, Car, Dumbbell, Snowflake, Map, List, Plus, Minus, ArrowLeft, ArrowRight, ArrowUp, ArrowDown } from 'lucide-react';
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+import { Search, MapPin, Star, ChevronDown, SlidersHorizontal, Wifi, Coffee, Car, Dumbbell, Snowflake, PawPrint, Baby, Briefcase, Utensils, Plane, X } from 'lucide-react'; // Removed unused icons
 import Header from '../components/Header';
+import { useNavigate } from 'react-router-dom';
 
 const SearchResultsPage = () => {
-  // Max possible value for the slider, based on the provided image's max price
+  const navigate = useNavigate();
+
   const SLIDER_MAX_VALUE = 1500000;
 
   const [minPrice, setMinPrice] = useState(0);
-  const [maxPrice, setMaxPrice] = useState(1349280); // Initial max from image
+  const [maxPrice, setMaxPrice] = useState(1349280);
 
   const [filters, setFilters] = useState({
     bestInLuxury: false,
     bookWithoutCreditCard: false,
     payNow: false,
     freeCancellation: false,
-    location8Plus: false,
     swimmingPool: false,
     gymFitness: false,
-    guestRating8Plus: false,
     airConditioning: false,
-    propertyType: {
-      apartmentFlat: false,
-      servicedApartment: false,
-      hotel: false,
+    petFriendly: false,
+    familyFriendly: false,
+    businessFacilities: false,
+    spaServices: false,
+    freeBreakfast: false,
+    restaurantOnSite: false,
+    airportShuttle: false,
+    nonSmokingRooms: false,
+    accessibleFacilities: false,
+    starRating: 0, // 0 means no star filter applied
+    roomType: {
+      standardRoom: false,
+      deluxeRoom: false,
+      suite: false,
+      familyRoom: false,
     }
   });
-  const [viewMode, setViewMode] = useState('list'); // 'list' or 'map'
+  // Removed viewMode and setViewMode as they are no longer used
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
 
-  // Refs for the slider elements
   const sliderRef = useRef(null);
   const minThumbRef = useRef(null);
   const maxThumbRef = useRef(null);
   const rangeRef = useRef(null);
+  const filtersSidebarRef = useRef(null);
 
-  // State to track which thumb is being dragged
-  const [draggingThumb, setDraggingThumb] = useState(null); // 'min' or 'max'
+  const [draggingThumb, setDraggingThumb] = useState(null);
 
-  // Helper to convert price value to a percentage of the slider width
   const getPercentage = useCallback((value) => {
     return (value / SLIDER_MAX_VALUE) * 100;
   }, []);
 
-  // Helper to convert a pixel position to a price value
   const getValueFromPosition = useCallback((position) => {
     if (!sliderRef.current) return 0;
     const sliderWidth = sliderRef.current.offsetWidth;
     const percentage = (position / sliderWidth);
     let value = Math.round(percentage * SLIDER_MAX_VALUE);
-    return Math.max(0, Math.min(SLIDER_MAX_VALUE, value)); // Ensure value is within bounds and not negative
+    return Math.max(0, Math.min(SLIDER_MAX_VALUE, value));
   }, []);
 
-  // Update thumb positions and range fill based on minPrice and maxPrice state
   const updateSliderPositions = useCallback(() => {
     if (minThumbRef.current && maxThumbRef.current && rangeRef.current && sliderRef.current) {
       const minPercent = getPercentage(minPrice);
@@ -64,12 +72,10 @@ const SearchResultsPage = () => {
     }
   }, [minPrice, maxPrice, getPercentage]);
 
-  // Effect to update slider positions when minPrice or maxPrice changes
   useEffect(() => {
     updateSliderPositions();
   }, [minPrice, maxPrice, updateSliderPositions]);
 
-  // Mouse event handlers for dragging the slider thumbs
   const handleMouseDown = useCallback((thumbType) => (e) => {
     e.preventDefault();
     setDraggingThumb(thumbType);
@@ -79,19 +85,16 @@ const SearchResultsPage = () => {
     if (!draggingThumb || !sliderRef.current) return;
 
     const sliderRect = sliderRef.current.getBoundingClientRect();
-    let newPosition = e.clientX - sliderRect.left; // Position relative to slider start
+    let newPosition = e.clientX - sliderRect.left;
 
-    // Clamp position within slider bounds
     newPosition = Math.max(0, Math.min(sliderRect.width, newPosition));
 
     let newValue = getValueFromPosition(newPosition);
 
     if (draggingThumb === 'min') {
-      // Ensure minPrice doesn't exceed maxPrice and doesn't go below 0
       newValue = Math.max(0, Math.min(newValue, maxPrice));
       setMinPrice(newValue);
     } else if (draggingThumb === 'max') {
-      // Ensure maxPrice doesn't go below minPrice and doesn't exceed SLIDER_MAX_VALUE
       newValue = Math.min(SLIDER_MAX_VALUE, Math.max(newValue, minPrice));
       setMaxPrice(newValue);
     }
@@ -101,7 +104,6 @@ const SearchResultsPage = () => {
     setDraggingThumb(null);
   }, []);
 
-  // Add/remove global mouse event listeners for dragging
   useEffect(() => {
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
@@ -112,9 +114,19 @@ const SearchResultsPage = () => {
     };
   }, [handleMouseMove, handleMouseUp]);
 
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setShowMobileFilters(false);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
 
   const handleFilterChange = (e) => {
-    const { name, type, checked } = e.target;
+    const { name, type, checked, value } = e.target;
     if (type === 'checkbox') {
       if (name.includes('.')) {
         const [parent, child] = name.split('.');
@@ -131,6 +143,11 @@ const SearchResultsPage = () => {
           [name]: checked
         }));
       }
+    } else if (name === 'starRating') {
+      setFilters(prev => ({
+        ...prev,
+        starRating: Number(value)
+      }));
     }
   };
 
@@ -139,38 +156,68 @@ const SearchResultsPage = () => {
     const numValue = Number(value);
 
     if (name === 'minPrice') {
-      // Ensure minPrice is not negative and does not exceed maxPrice
       setMinPrice(Math.max(0, Math.min(numValue, maxPrice)));
     } else {
-      // Ensure maxPrice is not negative and does not go below minPrice
       setMaxPrice(Math.max(0, Math.max(numValue, minPrice)));
     }
   };
 
-  // Dummy data for hotel listings
-  const hotelListings = [
-    {
-      id: 1,
-      name: 'Red Planet Cebu',
-      location: 'Cebu City, Cebu - City center',
-      rating: 8.3,
-      reviews: 15412,
-      award: '2024 Award',
-      images: [
-        'https://placehold.co/300x200/D1D5DB/FFFFFF?text=Hotel+1',
-        'https://placehold.co/300x200/9CA3AF/FFFFFF?text=View+A',
-        'https://placehold.co/300x200/6B7280/FFFFFF?text=View+B',
-      ],
-      offers: ['Breakfast', 'Free WiFi'],
-      price: 3890,
-      agodaPreferred: true,
-      coords: { lat: 10.3157, lng: 123.8800 }
+  const luxuriousGrandHotelCebu = {
+    id: 1,
+    name: 'Luxurious Grand Hotel Cebu',
+    location: 'Cebu City, Cebu - City center, near Ayala Center',
+    rating: 5, // Changed to integer star rating
+    reviews: 2500,
+    award: 'Best Luxury Hotel',
+    images: [
+      'https://placehold.co/300x200/4F46E5/FFFFFF?text=Grand+Hotel+Exterior',
+      'https://placehold.co/300x200/3730A3/FFFFFF?text=Lobby',
+      'https://placehold.co/300x200/1E293B/FFFFFF?text=Room',
+    ],
+    amenities: [
+      'Free WiFi',
+      'Swimming Pool',
+      'Gym/Fitness Center',
+      'Restaurant',
+      'Bar/Lounge',
+      'Free Parking',
+      'Air conditioning',
+      '24-hour front desk',
+      'Spa services',
+      'Room service',
+      'Breakfast included',
+      'Concierge service'
+    ],
+    price: 9500,
+    agodaPreferred: true,
+    coords: { lat: 10.3157, lng: 123.8800 },
+    mainImage: 'https://placehold.co/1200x600/4F46E5/FFFFFF?text=Grand+Hotel+Exterior',
+    galleryImages: [
+      'https://placehold.co/400x300/3730A3/FFFFFF?text=Lobby',
+      'https://placehold.co/400x300/1E293B/FFFFFF?text=Room',
+      'https://placehold.co/400x300/1D4ED8/FFFFFF?text=Pool',
+      'https://placehold.co/400x300/2563EB/FFFFFF?text=Restaurant',
+      'https://placehold.co/400x300/3B82F6/FFFFFF?text=Spa',
+    ],
+    pricePerNight: 9500,
+    currency: '₱',
+    checkInTime: '3:00 PM',
+    checkOutTime: '12:00 PM',
+    contact: {
+      phone: '+63 912 345 6789',
+      email: 'info@grandhotel.com'
     },
+    description: 'Experience unparalleled luxury and comfort at the Grand Hotel Cebu. Located in the heart of the city, our hotel offers exquisite rooms, world-class dining, and exceptional service. Perfect for both business and leisure travelers.',
+    roomType: 'Suite',
+  };
+
+  const allHotelListings = [
+    luxuriousGrandHotelCebu,
     {
       id: 2,
       name: 'Yello Hotel Cebu Powered By Cocotel',
       location: 'Cebu City, Cebu - 1.3 km to center',
-      rating: 8.9,
+      rating: 3, // Corrected to 3 to match "Best rated 3-star hotels"
       reviews: 3750,
       award: 'Best rated 3-star hotels',
       images: [
@@ -178,56 +225,136 @@ const SearchResultsPage = () => {
         'https://placehold.co/300x200/818CF8/FFFFFF?text=View+C',
         'https://placehold.co/300x200/6366F1/FFFFFF?text=View+D',
       ],
-      offers: ['Breakfast', 'Parking', 'Express check-in', '+1'],
+      amenities: ['Breakfast', 'Parking', 'Express check-in', 'Free WiFi'],
       price: 4574,
-      coords: { lat: 10.3250, lng: 123.8950 }
+      coords: { lat: 10.3250, lng: 123.8950 },
+      mainImage: 'https://placehold.co/1200x600/A78BFA/FFFFFF?text=Yello+Hotel+Exterior',
+      galleryImages: [],
+      pricePerNight: 4574,
+      currency: '₱',
+      checkInTime: '3:00 PM',
+      checkOutTime: '12:00 PM',
+      contact: { phone: '', email: '' },
+      description: 'A vibrant hotel offering modern comforts and convenient access to Cebu City attractions.',
+      roomType: 'Standard Room',
     },
     {
       id: 3,
       name: 'Sugbutel Family Hotel Cebu powered by Cocotel',
       location: 'Cebu City, Cebu',
-      rating: 7.9,
+      rating: 3, // Changed to integer star rating
       reviews: 2013,
       images: [
         'https://placehold.co/300x200/4F46E5/FFFFFF?text=Hotel+3',
         'https://placehold.co/300x200/3730A3/FFFFFF?text=View+E',
         'https://placehold.co/300x200/1E293B/FFFFFF?text=View+F',
       ],
-      offers: ['Breakfast', 'Parking'],
+      amenities: ['Breakfast', 'Parking', 'Free WiFi', 'Family-friendly'],
       price: 5000,
-      coords: { lat: 10.2900, lng: 123.9000 }
+      coords: { lat: 10.2900, lng: 123.9000 },
+      mainImage: 'https://placehold.co/1200x600/4F46E5/FFFFFF?text=Sugbutel+Exterior',
+      galleryImages: [],
+      pricePerNight: 5000,
+      currency: '₱',
+      checkInTime: '3:00 PM',
+      checkOutTime: '12:00 PM',
+      contact: { phone: '', email: '' },
+      description: 'A family-friendly hotel providing comfortable stays and essential amenities for a pleasant trip.',
+      roomType: 'Family Room',
     },
     {
       id: 4,
       name: 'Quest Hotel & Conference Center Cebu',
       location: 'Cebu City, Cebu - City center',
-      rating: 8.5,
+      rating: 4, // Changed to integer star rating
       reviews: 18900,
       images: [
         'https://placehold.co/300x200/1D4ED8/FFFFFF?text=Hotel+4',
         'https://placehold.co/300x200/2563EB/FFFFFF?text=View+G',
         'https://placehold.co/300x200/3B82F6/FFFFFF?text=View+H',
       ],
-      offers: ['Breakfast', 'Swimming Pool', 'Free WiFi'],
+      amenities: ['Breakfast', 'Swimming Pool', 'Free WiFi', 'Gym/Fitness Center', 'Business facilities'],
       price: 7000,
-      coords: { lat: 10.3100, lng: 123.8900 }
+      coords: { lat: 10.3100, lng: 123.8900 },
+      mainImage: 'https://placehold.co/1200x600/1D4ED8/FFFFFF?text=Quest+Hotel+Exterior',
+      galleryImages: [],
+      pricePerNight: 7000,
+      currency: '₱',
+      checkInTime: '3:00 PM',
+      checkOutTime: '12:00 PM',
+      contact: { phone: '', email: '' },
+      description: 'A modern hotel with conference facilities, ideal for business and leisure, offering a refreshing pool and central location.',
+      roomType: 'Deluxe Room',
     },
     {
       id: 5,
       name: 'Waterfront Cebu City Hotel & Casino',
       location: 'Cebu City, Cebu - IT Park',
-      rating: 7.5,
+      rating: 3, // Changed to integer star rating
       reviews: 12500,
       images: [
         'https://placehold.co/300x200/065F46/FFFFFF?text=Hotel+5',
         'https://placehold.co/300x200/059669/FFFFFF?text=View+I',
         'https://placehold.co/300x200/10B981/FFFFFF?text=View+J',
       ],
-      offers: ['Casino', 'Swimming Pool', 'Dining'],
+      amenities: ['Casino', 'Swimming Pool', 'Restaurant', 'Free WiFi'],
       price: 6000,
-      coords: { lat: 10.3300, lng: 123.9050 }
+      coords: { lat: 10.3300, lng: 123.9050 },
+      mainImage: 'https://placehold.co/1200x600/065F46/FFFFFF?text=Waterfront+Hotel+Exterior',
+      galleryImages: [],
+      pricePerNight: 6000,
+      currency: '₱',
+      checkInTime: '3:00 PM',
+      checkOutTime: '12:00 PM',
+      contact: { phone: '', email: '' },
+      description: 'A large hotel and casino complex offering entertainment, dining, and comfortable accommodations near IT Park.',
+      roomType: 'Standard Room',
     }
   ];
+
+  const filteredHotels = useMemo(() => {
+    return allHotelListings.filter(hotel => {
+      // Price range filter
+      if (hotel.price < minPrice || hotel.price > maxPrice) {
+        return false;
+      }
+
+      // Star rating filter: Display hotels with rating >= selected star.
+      // If filters.starRating is 0 (nothing selected), this condition is skipped,
+      // and all hotels are considered for star rating.
+      if (filters.starRating > 0 && hotel.rating < filters.starRating) {
+        return false;
+      }
+
+      // Amenity filters
+      if (filters.bestInLuxury && hotel.award !== 'Best Luxury Hotel') return false;
+      if (filters.swimmingPool && !hotel.amenities.includes('Swimming Pool')) return false;
+      if (filters.gymFitness && !hotel.amenities.includes('Gym/Fitness Center')) return false;
+      if (filters.airConditioning && !hotel.amenities.includes('Air conditioning')) return false;
+      if (filters.petFriendly && !hotel.amenities.includes('Pet-friendly')) return false;
+      if (filters.familyFriendly && !hotel.amenities.includes('Family-friendly')) return false;
+      if (filters.businessFacilities && !hotel.amenities.includes('Business facilities')) return false;
+      if (filters.spaServices && !hotel.amenities.includes('Spa services')) return false;
+      if (filters.freeBreakfast && !hotel.amenities.includes('Breakfast included')) return false;
+      if (filters.restaurantOnSite && !hotel.amenities.includes('Restaurant')) return false;
+      if (filters.airportShuttle && !hotel.amenities.includes('Airport shuttle')) return false;
+      // Note: 'Book without credit card', 'Pay now', 'Free cancellation', 'Non-smoking rooms',
+      // and 'Accessible facilities' are not explicitly in dummy data amenities,
+      // so they will not filter unless added to the hotel.amenities array or a separate property.
+
+      // Room type filters
+      const selectedRoomTypes = Object.keys(filters.roomType).filter(key => filters.roomType[key]);
+      if (selectedRoomTypes.length > 0) {
+        const hasMatchingRoomType = selectedRoomTypes.some(type => {
+          const readableRoomType = type.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+          return hotel.roomType === readableRoomType;
+        });
+        if (!hasMatchingRoomType) return false;
+      }
+
+      return true;
+    });
+  }, [minPrice, maxPrice, filters, allHotelListings]);
 
   return (
     <div className="min-h-screen bg-gray-100 font-inter text-gray-800">
@@ -247,9 +374,32 @@ const SearchResultsPage = () => {
 
       {/* Main Content Area */}
       <div className="container mx-auto px-6 py-8 flex flex-col lg:flex-row gap-8">
+        {/* Mobile Filters Overlay */}
+        {showMobileFilters && (
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+            onClick={() => setShowMobileFilters(false)}
+          ></div>
+        )}
+
         {/* Left Sidebar - Filters */}
-        <aside className="lg:w-1/4 bg-white p-6 rounded-2xl shadow-lg h-fit sticky top-24">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900">Your filters</h2>
+        <aside
+          ref={filtersSidebarRef}
+          className={`fixed top-0 left-0 h-full w-full max-w-xs bg-white p-6 rounded-r-2xl shadow-lg z-50 transform transition-transform duration-300 ease-in-out overflow-y-auto
+            lg:relative lg:w-1/4 lg:translate-x-0 lg:h-fit lg:sticky lg:top-24 lg:rounded-2xl
+            ${showMobileFilters ? 'translate-x-0' : '-translate-x-full'}`}
+        >
+          <div className="flex justify-between items-center mb-6 lg:hidden">
+            <h2 className="text-2xl font-bold text-gray-900">Your filters</h2>
+            <button
+              onClick={() => setShowMobileFilters(false)}
+              className="p-2 rounded-full text-gray-600 hover:bg-gray-100"
+            >
+              <X className="w-6 h-6" />
+            </button>
+          </div>
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 hidden lg:block">Your filters</h2>
+
 
           {/* Budget Slider - Updated with custom slider */}
           <div className="mb-6">
@@ -262,7 +412,7 @@ const SearchResultsPage = () => {
                   name="minPrice"
                   value={minPrice}
                   onChange={handlePriceInputChange}
-                  min="0" // Ensure minimum is 0
+                  min="0"
                   className="w-full pl-7 pr-2 py-2 border border-gray-300 rounded-lg text-center"
                 />
               </div>
@@ -274,7 +424,7 @@ const SearchResultsPage = () => {
                   name="maxPrice"
                   value={maxPrice}
                   onChange={handlePriceInputChange}
-                  min="0" // Ensure minimum is 0
+                  min="0"
                   className="w-full pl-7 pr-2 py-2 border border-gray-300 rounded-lg text-center"
                 />
               </div>
@@ -308,6 +458,38 @@ const SearchResultsPage = () => {
             </div>
           </div>
 
+          {/* Star Rating Filter */}
+          <div className="mb-6">
+            <h3 className="font-semibold text-gray-700 mb-3">Star Rating</h3>
+            <div className="flex items-center space-x-1">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <label key={star} className="flex items-center cursor-pointer">
+                  <input
+                    type="radio"
+                    name="starRating"
+                    value={star}
+                    checked={filters.starRating === star}
+                    onChange={handleFilterChange}
+                    className="hidden"
+                  />
+                  <Star
+                    className={`w-6 h-6 transition-colors ${
+                      filters.starRating >= star ? 'text-yellow-400 fill-current' : 'text-gray-300'
+                    }`}
+                  />
+                </label>
+              ))}
+              {filters.starRating > 0 && (
+                <button
+                  onClick={() => setFilters(prev => ({ ...prev, starRating: 0 }))}
+                  className="ml-2 text-sm text-blue-600 hover:text-blue-800"
+                >
+                  Clear
+                </button>
+              )}
+            </div>
+          </div>
+
           {/* Popular filters for Cebu */}
           <div className="mb-6">
             <h3 className="font-semibold text-gray-700 mb-3">Popular filters for Cebu</h3>
@@ -329,10 +511,6 @@ const SearchResultsPage = () => {
                 <span className="ml-2">Free cancellation</span>
               </label>
               <label className="flex items-center text-gray-700">
-                <input type="checkbox" name="location8Plus" checked={filters.location8Plus} onChange={handleFilterChange} className="form-checkbox h-4 w-4 text-blue-600 rounded" />
-                <span className="ml-2">Location: 8+ Excellent</span>
-              </label>
-              <label className="flex items-center text-gray-700">
                 <input type="checkbox" name="swimmingPool" checked={filters.swimmingPool} onChange={handleFilterChange} className="form-checkbox h-4 w-4 text-blue-600 rounded" />
                 <span className="ml-2">Swimming pool</span>
               </label>
@@ -341,39 +519,75 @@ const SearchResultsPage = () => {
                 <span className="ml-2">Gym/fitness</span>
               </label>
               <label className="flex items-center text-gray-700">
-                <input type="checkbox" name="guestRating8Plus" checked={filters.guestRating8Plus} onChange={handleFilterChange} className="form-checkbox h-4 w-4 text-blue-600 rounded" />
-                <span className="ml-2">Guest rating: 8+ Excellent</span>
-              </label>
-              <label className="flex items-center text-gray-700">
                 <input type="checkbox" name="airConditioning" checked={filters.airConditioning} onChange={handleFilterChange} className="form-checkbox h-4 w-4 text-blue-600 rounded" />
                 <span className="ml-2">Air conditioning</span>
+              </label>
+              <label className="flex items-center text-gray-700">
+                <input type="checkbox" name="petFriendly" checked={filters.petFriendly} onChange={handleFilterChange} className="form-checkbox h-4 w-4 text-blue-600 rounded" />
+                <span className="ml-2">Pet-friendly</span>
+              </label>
+              <label className="flex items-center text-gray-700">
+                <input type="checkbox" name="familyFriendly" checked={filters.familyFriendly} onChange={handleFilterChange} className="form-checkbox h-4 w-4 text-blue-600 rounded" />
+                <span className="ml-2">Family-friendly</span>
+              </label>
+              <label className="flex items-center text-gray-700">
+                <input type="checkbox" name="businessFacilities" checked={filters.businessFacilities} onChange={handleFilterChange} className="form-checkbox h-4 w-4 text-blue-600 rounded" />
+                <span className="ml-2">Business facilities</span>
+              </label>
+              <label className="flex items-center text-gray-700">
+                <input type="checkbox" name="spaServices" checked={filters.spaServices} onChange={handleFilterChange} className="form-checkbox h-4 w-4 text-blue-600 rounded" />
+                <span className="ml-2">Spa services</span>
+              </label>
+              <label className="flex items-center text-gray-700">
+                <input type="checkbox" name="freeBreakfast" checked={filters.freeBreakfast} onChange={handleFilterChange} className="form-checkbox h-4 w-4 text-blue-600 rounded" />
+                <span className="ml-2">Free breakfast</span>
+              </label>
+              <label className="flex items-center text-gray-700">
+                <input type="checkbox" name="restaurantOnSite" checked={filters.restaurantOnSite} onChange={handleFilterChange} className="form-checkbox h-4 w-4 text-blue-600 rounded" />
+                <span className="ml-2">Restaurant on-site</span>
+              </label>
+              <label className="flex items-center text-gray-700">
+                <input type="checkbox" name="airportShuttle" checked={filters.airportShuttle} onChange={handleFilterChange} className="form-checkbox h-4 w-4 text-blue-600 rounded" />
+                <span className="ml-2">Airport shuttle</span>
+              </label>
+              <label className="flex items-center text-gray-700">
+                <input type="checkbox" name="nonSmokingRooms" checked={filters.nonSmokingRooms} onChange={handleFilterChange} className="form-checkbox h-4 w-4 text-blue-600 rounded" />
+                <span className="ml-2">Non-smoking rooms</span>
+              </label>
+              <label className="flex items-center text-gray-700">
+                <input type="checkbox" name="accessibleFacilities" checked={filters.accessibleFacilities} onChange={handleFilterChange} className="form-checkbox h-4 w-4 text-blue-600 rounded" />
+                <span className="ml-2">Accessible facilities</span>
               </label>
             </div>
           </div>
 
-          {/* Property type */}
+          {/* Room type (formerly Property type) */}
           <div>
-            <h3 className="font-semibold text-gray-700 mb-3">Property type</h3>
+            <h3 className="font-semibold text-gray-700 mb-3">Room type</h3>
             <div className="space-y-2">
               <label className="flex items-center text-gray-700">
-                <input type="checkbox" name="propertyType.apartmentFlat" checked={filters.propertyType.apartmentFlat} onChange={handleFilterChange} className="form-checkbox h-4 w-4 text-blue-600 rounded" />
-                <span className="ml-2">Apartment/Flat (1232)</span>
+                <input type="checkbox" name="roomType.standardRoom" checked={filters.roomType.standardRoom} onChange={handleFilterChange} className="form-checkbox h-4 w-4 text-blue-600 rounded" />
+                <span className="ml-2">Standard Room</span>
               </label>
               <label className="flex items-center text-gray-700">
-                <input type="checkbox" name="propertyType.servicedApartment" checked={filters.propertyType.servicedApartment} onChange={handleFilterChange} className="form-checkbox h-4 w-4 text-blue-600 rounded" />
-                <span className="ml-2">Serviced apartment (347)</span>
+                <input type="checkbox" name="roomType.deluxeRoom" checked={filters.roomType.deluxeRoom} onChange={handleFilterChange} className="form-checkbox h-4 w-4 text-blue-600 rounded" />
+                <span className="ml-2">Deluxe Room</span>
               </label>
               <label className="flex items-center text-gray-700">
-                <input type="checkbox" name="propertyType.hotel" checked={filters.propertyType.hotel} onChange={handleFilterChange} className="form-checkbox h-4 w-4 text-blue-600 rounded" />
-                <span className="ml-2">Hotel (886)</span>
+                <input type="checkbox" name="roomType.suite" checked={filters.roomType.suite} onChange={handleFilterChange} className="form-checkbox h-4 w-4 text-blue-600 rounded" />
+                <span className="ml-2">Suite</span>
+              </label>
+              <label className="flex items-center text-gray-700">
+                <input type="checkbox" name="roomType.familyRoom" checked={filters.roomType.familyRoom} onChange={handleFilterChange} className="form-checkbox h-4 w-4 text-blue-600 rounded" />
+                <span className="ml-2">Family Room</span>
               </label>
             </div>
           </div>
         </aside>
 
-        {/* Right Main Content - Hotel Listings or Map */}
+        {/* Right Main Content - Hotel Listings */}
         <main className="lg:w-3/4">
-          {/* Sort & View Mode Toggle Bar */}
+          {/* Sort & View Mode Toggle Bar (Map view toggle removed) */}
           <div className="bg-white p-4 rounded-2xl shadow-lg mb-6 flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center space-x-4">
               <span className="text-gray-700 font-medium">Sort by</span>
@@ -393,33 +607,24 @@ const SearchResultsPage = () => {
                 Hot Deals!
               </button>
             </div>
-            <div className="flex items-center space-x-2">
-              <button
-                onClick={() => setViewMode('list')}
-                className={`p-2 rounded-full transition-colors ${viewMode === 'list' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
-                title="List View"
-              >
-                <List className="w-5 h-5" />
-              </button>
-              <button
-                onClick={() => setViewMode('map')}
-                className={`p-2 rounded-full transition-colors ${viewMode === 'map' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
-                title="Map View"
-              >
-                <Map className="w-5 h-5" />
-              </button>
-            </div>
-            <button className="lg:hidden px-4 py-2 bg-blue-500 text-white rounded-full text-sm font-medium flex items-center shadow-md">
+            {/* Mobile Filters Toggle Button */}
+            <button
+              onClick={() => setShowMobileFilters(true)}
+              className="lg:hidden px-4 py-2 bg-blue-500 text-white rounded-full text-sm font-medium flex items-center shadow-md"
+            >
               <SlidersHorizontal className="w-4 h-4 mr-2" /> Filters
             </button>
           </div>
 
-          {/* Conditional Rendering: Hotel Listings Grid or Map View */}
-          {viewMode === 'list' ? (
-            <div className="space-y-6">
-              {hotelListings.map(hotel => (
-                <div key={hotel.id} className="bg-white rounded-2xl shadow-lg flex flex-col md:flex-row overflow-hidden">
-                  {/* Image Gallery - Removed */}
+          {/* Hotel Listings Grid */}
+          <div className="space-y-6">
+            {filteredHotels.length > 0 ? (
+              filteredHotels.map(hotel => (
+                <div
+                  key={hotel.id}
+                  className="bg-white rounded-2xl shadow-lg flex flex-col md:flex-row overflow-hidden cursor-pointer"
+                  onClick={() => navigate('/hotelpage', { state: { hotel: hotel } })}
+                >
                   <div className="relative md:w-2/5 lg:w-1/3 flex-shrink-0">
                     <img src={hotel.images[0]} alt={hotel.name} className="w-full h-64 md:h-full object-cover" />
                     {hotel.award && (
@@ -427,34 +632,37 @@ const SearchResultsPage = () => {
                         {hotel.award}
                       </div>
                     )}
+                    {/* Display Star Rating on the card */}
+                    <div className="absolute top-2 right-2 bg-yellow-400 text-white text-sm font-bold px-3 py-1 rounded-full flex items-center">
+                      {hotel.rating} <Star className="w-4 h-4 ml-1 fill-current" />
+                    </div>
                   </div>
 
-                  {/* Hotel Details */}
                   <div className="p-6 flex-grow flex flex-col justify-between">
                     <div>
                       <div className="flex justify-between items-start mb-2">
                         <h3 className="text-2xl font-bold text-gray-900">{hotel.name}</h3>
-                        <div className="text-right">
-                          <span className="block text-3xl font-bold text-blue-600">{hotel.rating.toFixed(1)}</span>
-                          <span className="block text-sm text-gray-600">{hotel.reviews} reviews</span>
-                        </div>
                       </div>
                       <p className="text-gray-600 flex items-center mb-3">
-                        <MapPin className="w-4 h-4 mr-1 text-blue-500" /> {hotel.location} <span className="ml-2 text-blue-500 cursor-pointer">Map</span>
+                        <MapPin className="w-4 h-4 mr-1 text-blue-500" /> {hotel.location}
                       </p>
-                      {/* Changed "This property offers:" to "Hotel Amenities:" and adjusted spacing */}
                       <p className="text-gray-700 text-sm mb-2 mt-4">Hotel Amenities:</p>
                       <div className="flex flex-wrap gap-2 mb-4">
-                        {hotel.offers.map((offer, index) => (
+                        {hotel.amenities.map((amenity, index) => (
                           <span key={index} className="bg-gray-100 text-gray-700 text-xs font-medium px-3 py-1 rounded-full flex items-center">
-                            {offer === 'Breakfast' && <Coffee className="w-3 h-3 mr-1" />}
-                            {offer === 'Free WiFi' && <Wifi className="w-3 h-3 mr-1" />}
-                            {offer === 'Parking' && <Car className="w-3 h-3 mr-1" />}
-                            {offer === 'Express check-in' && <SlidersHorizontal className="w-3 h-3 mr-1" />}
-                            {offer === 'Swimming Pool' && <Star className="w-3 h-3 mr-1" />}
-                            {offer === 'Gym/fitness' && <Dumbbell className="w-3 h-3 mr-1" />}
-                            {offer === 'Air conditioning' && <Snowflake className="w-3 h-3 mr-1" />}
-                            {offer}
+                            {amenity === 'Breakfast' && <Coffee className="w-3 h-3 mr-1" />}
+                            {amenity === 'Free WiFi' && <Wifi className="w-3 h-3 mr-1" />}
+                            {amenity === 'Free Parking' && <Car className="w-3 h-3 mr-1" />}
+                            {amenity === 'Swimming Pool' && <Star className="w-3 h-3 mr-1" />}
+                            {amenity === 'Gym/Fitness Center' && <Dumbbell className="w-3 h-3 mr-1" />}
+                            {amenity === 'Air conditioning' && <Snowflake className="w-3 h-3 mr-1" />}
+                            {amenity === 'Pet-friendly' && <PawPrint className="w-3 h-3 mr-1" />}
+                            {amenity === 'Family-friendly' && <Baby className="w-3 h-3 mr-1" />}
+                            {amenity === 'Business facilities' && <Briefcase className="w-3 h-3 mr-1" />}
+                            {amenity === 'Spa services' && <Star className="w-3 h-3 mr-1" />}
+                            {amenity === 'Restaurant' && <Utensils className="w-3 h-3 mr-1" />}
+                            {amenity === 'Airport shuttle' && <Plane className="w-3 h-3 mr-1" />}
+                            {amenity}
                           </span>
                         ))}
                       </div>
@@ -464,56 +672,25 @@ const SearchResultsPage = () => {
                       <div className="text-right">
                         <p className="text-4xl font-extrabold text-gray-900">₱{hotel.price.toLocaleString()}</p>
                       </div>
-                      <button className="ml-4 px-6 py-3 bg-blue-600 text-white font-bold rounded-xl shadow-md hover:bg-blue-700 transition-colors">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate('/hotelpage', { state: { hotel: hotel } });
+                        }}
+                        className="ml-4 px-6 py-3 bg-blue-600 text-white font-bold rounded-xl shadow-md hover:bg-blue-700 transition-colors"
+                      >
                         View Deal
                       </button>
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
-          ) : (
-            <div className="relative bg-gray-200 rounded-2xl shadow-lg h-[600px] flex items-center justify-center overflow-hidden">
-              <img
-                src="https://placehold.co/1200x800/E0E0E0/424242?text=Map+View+Placeholder"
-                alt="Map Placeholder"
-                className="w-full h-full object-cover"
-              />
-              {/* Map controls */}
-              <div className="absolute top-4 right-4 bg-white rounded-xl shadow-md p-2 flex flex-col space-y-2">
-                <button className="p-2 bg-gray-100 rounded-lg hover:bg-gray-200"><Plus className="w-5 h-5 text-gray-700" /></button>
-                <button className="p-2 bg-gray-100 rounded-lg hover:bg-gray-200"><Minus className="w-5 h-5 text-gray-700" /></button>
+              ))
+            ) : (
+              <div className="text-center text-gray-600 text-lg py-10">
+                No hotels found matching your selected filters.
               </div>
-              <div className="absolute bottom-4 right-4 bg-white rounded-xl shadow-md p-2 grid grid-cols-3 gap-1">
-                <div className="col-span-1"></div>
-                <button className="p-2 bg-gray-100 rounded-lg hover:bg-gray-200"><ArrowUp className="w-5 h-5 text-gray-700" /></button>
-                <div className="col-span-1"></div>
-                <button className="p-2 bg-gray-100 rounded-lg hover:bg-gray-200"><ArrowLeft className="w-5 h-5 text-gray-700" /></button>
-                <div className="col-span-1"></div>
-                <button className="p-2 bg-gray-100 rounded-lg hover:bg-gray-200"><ArrowRight className="w-5 h-5 text-gray-700" /></button>
-                <div className="col-span-1"></div>
-                <button className="p-2 bg-gray-100 rounded-lg hover:bg-gray-200"><ArrowDown className="w-5 h-5 text-gray-700" /></button>
-                <div className="col-span-1"></div>
-              </div>
-
-              {/* Example hotel markers on the map */}
-              {hotelListings.map(hotel => (
-                <div
-                  key={hotel.id}
-                  className="absolute p-2 bg-blue-600 text-white rounded-full text-xs font-bold shadow-lg"
-                  style={{
-                    // These are placeholder positions. In a real map, you'd convert lat/lng to pixel positions.
-                    top: `${50 + (hotel.coords.lat - 10.3) * 500}px`, // Adjust multipliers for visual spread
-                    left: `${50 + (hotel.coords.lng - 123.88) * 500}px`,
-                    transform: 'translate(-50%, -50%)' // Center the marker
-                  }}
-                >
-                  ₱{hotel.price.toLocaleString()}
-                </div>
-              ))}
-
-            </div>
-          )}
+            )}
+          </div>
         </main>
       </div>
     </div>
