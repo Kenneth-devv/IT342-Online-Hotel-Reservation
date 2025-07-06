@@ -146,7 +146,10 @@ const HomePage = () => {
           <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto drop-shadow-md">
             Discover amazing hotels and experiences tailored just for you.
           </p>
-          <button className="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-full shadow-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 transform hover:scale-105">
+          <button 
+            onClick={() => navigate('/search-results')}
+            className="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-full shadow-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 transform hover:scale-105"
+          >
             Explore Hotels
           </button>
         </div>
@@ -349,7 +352,10 @@ const HomePage = () => {
             ))}
           </div>
           <div className="text-center mt-12">
-            <button className="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-full shadow-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 transform hover:scale-105">
+            <button 
+              onClick={() => navigate('/search-results')}
+              className="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-full shadow-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 transform hover:scale-105"
+            >
               See More Hotels
             </button>
           </div>
@@ -425,7 +431,10 @@ const HomePage = () => {
           <p className="text-lg md:text-xl mb-10 max-w-3xl mx-auto opacity-90">
             Join thousands of happy travelers and find your dream destination today.
           </p>
-          <button className="px-10 py-5 bg-white text-blue-600 font-bold rounded-full shadow-xl hover:bg-gray-100 transition-all duration-300 transform hover:scale-105">
+          <button 
+            onClick={() => navigate('/search-results')}
+            className="px-10 py-5 bg-white text-blue-600 font-bold rounded-full shadow-xl hover:bg-gray-100 transition-all duration-300 transform hover:scale-105"
+          >
             Book Now
           </button>
         </div>
