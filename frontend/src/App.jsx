@@ -12,8 +12,6 @@ import BookingPage from './pages/BookingPage';
 import SearchResultsPage from './pages/SearchResultsPage';
 import AdminDashboard from './pages/AdminDashboard';
 
-
-
 const App = () => {
   return (
     <AuthProvider>
@@ -49,21 +47,18 @@ const App = () => {
               <BookingPage />
             </ProtectedRoute>
           } />
-          
+
           <Route path="/search-results" element={
             <ProtectedRoute>
               <SearchResultsPage />
             </ProtectedRoute>
           } />
-          <Route
-            path="/admin/dashboard"
-            element={
-              <ProtectedRoute>
-                <AdminDashboard />
-              </ProtectedRoute>
-            }
-          />
 
+          <Route path="/admin/dashboard" element={
+            <ProtectedRoute>
+              <AdminDashboard />
+            </ProtectedRoute>
+          } />
         </Routes>
       </Router>
     </AuthProvider>
