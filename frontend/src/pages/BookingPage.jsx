@@ -63,48 +63,54 @@ const BookingPage = () => {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  setIsSubmitting(true);
+    e.preventDefault();
+    setIsSubmitting(true);
 
-  const requestBody = {
-    roomId: selectedHotel.id,  
-    checkIn: bookingData.checkIn,
-    checkOut: bookingData.checkOut,
-    guestDetails: {
-      firstName: bookingData.firstName,
-      lastName: bookingData.lastName,
-      email: bookingData.email,
-      phone: bookingData.phone,
-    },
-    paymentMode: "Cash", 
-  };
-
-  try {
-    const response = await fetch("http://localhost:8080/api/bookings", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
+    const requestBody = {
+      hotelId: selectedHotel.id,
+      hotelName: selectedHotel.name,
+      checkIn: bookingData.checkIn,
+      checkOut: bookingData.checkOut,
+      guestDetails: {
+        firstName: bookingData.firstName,
+        lastName: bookingData.lastName,
+        email: bookingData.email,
+        phone: bookingData.phone,
       },
-      body: JSON.stringify(requestBody)
-    });
+      numberOfGuests: bookingData.guests,
+      numberOfRooms: bookingData.rooms,
+      paymentMode: "Cash",
+      specialRequests: bookingData.specialRequests,
+      totalAmount: calculateTotal()
+    };
 
-    if (!response.ok) {
-      throw new Error("Booking failed");
+    try {
+      const response = await fetch("http://localhost:8080/api/bookings", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        credentials: 'include',
+        body: JSON.stringify(requestBody)
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Booking failed");
+      }
+
+      const result = await response.json();
+
+      console.log("Booking Success:", result);
+      setBookingConfirmed(true);
+      setIsSubmitting(false);
+
+    } catch (error) {
+      console.error("Error booking hotel:", error);
+      setIsSubmitting(false);
+      alert(error.message || "There was an issue processing your booking. Please try again.");
     }
-
-    const result = await response.json();
-
-    console.log("Booking Success:", result);
-    setBookingConfirmed(true);
-    setIsSubmitting(false);
-
-  
-  } catch (error) {
-    console.error("Error booking hotel:", error);
-    setIsSubmitting(false);
-    alert("There was an issue processing your booking. Please try again.");
-  }
-};
+  };
 
   const handleNavigation = (path) => {
     navigate(path);

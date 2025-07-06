@@ -24,7 +24,6 @@ export const AuthProvider = ({ children }) => {
       const response = await fetch('http://localhost:8080/api/auth/status', {
         credentials: 'include'
       });
-
       if (response.ok) {
         const userData = await response.json();
         setIsAuthenticated(true);

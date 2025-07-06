@@ -2,18 +2,40 @@ import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-// Blocks route access for unauthenticated users
-export const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, loading } = useAuth();
-
-  if (loading) return null; // or a spinner/loading state
-  return isAuthenticated ? children : <Navigate to="/login" replace />;
-};
-
-// Blocks route access for authenticated users (e.g., /login, /signup)
+// Component to prevent authenticated users from accessing auth pages (login/signup)
 export const AuthRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
 
-  if (loading) return null;
-  return !isAuthenticated ? children : <Navigate to="/" replace />;
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  if (isAuthenticated) {
+    return <Navigate to="/hotelpage" replace />;
+  }
+
+  return children;
 };
+
+// Component to protect routes that require authentication
+export const ProtectedRoute = ({ children }) => {
+  const { isAuthenticated, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return children;
+}; 

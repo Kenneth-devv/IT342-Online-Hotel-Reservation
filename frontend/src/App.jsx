@@ -17,8 +17,10 @@ const App = () => {
     <AuthProvider>
       <Router>
         <Routes>
+          {/* Default route: When the user lands on the root path ("/"), they will see the HomePage */}
           <Route path="/" element={<HomePage />} />
 
+          {/* Auth routes - prevent authenticated users from accessing */}
           <Route path="/login" element={
             <AuthRoute>
               <LoginPage />
@@ -31,6 +33,7 @@ const App = () => {
             </AuthRoute>
           } />
 
+          {/* Protected routes - require authentication */}
           <Route path="/hotelpage" element={
             <ProtectedRoute>
               <HotelPage />

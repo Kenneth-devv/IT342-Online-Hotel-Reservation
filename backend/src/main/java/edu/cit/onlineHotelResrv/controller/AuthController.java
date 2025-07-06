@@ -6,6 +6,7 @@ import edu.cit.onlineHotelResrv.dto.LoginRequest;
 import edu.cit.onlineHotelResrv.dto.LoginResponse;
 import edu.cit.onlineHotelResrv.dto.SignupRequest;
 import edu.cit.onlineHotelResrv.dto.SignupResponse;
+import edu.cit.onlineHotelResrv.dto.UserInfoResponse;
 import edu.cit.onlineHotelResrv.repository.RoleRepository;
 import edu.cit.onlineHotelResrv.repository.UserRepository;
 import org.springframework.http.HttpStatus;
@@ -82,16 +83,17 @@ public class AuthController {
 
         for (GrantedAuthority authority : authorities) {
             String role = authority.getAuthority();
-            switch (role) {
-                case "ROLE_ADMIN":
+            String cleanRole = role.startsWith("ROLE_") ? role.substring(5) : role;
+            switch (cleanRole) {
+                case "ADMIN":
                     return ResponseEntity.ok("/admin/dashboard");
-                case "ROLE_RECEPTIONIST":
+                case "RECEPTIONIST":
                     return ResponseEntity.ok("/receptionist/dashboard");
-                case "ROLE_RESERVATION_STAFF":
+                case "RESERVATION_STAFF":
                     return ResponseEntity.ok("/reservation/dashboard");
-                case "ROLE_ACCOUNTING":
+                case "ACCOUNTING":
                     return ResponseEntity.ok("/accounting/dashboard");
-                case "ROLE_USER":
+                case "USER":
                     return ResponseEntity.ok("/hotelpage");
             }
         }
@@ -102,5 +104,32 @@ public class AuthController {
     @PostMapping("/logout")
     public ResponseEntity<String> logout() {
         return ResponseEntity.ok("Logged out successfully");
+    }
+
+    @GetMapping("/status")
+    public ResponseEntity<?> getAuthStatus(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not authenticated");
+        }
+
+        User user = userRepository.findByUsername(authentication.getName())
+                .orElse(null);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
+        }
+
+        return ResponseEntity.ok(new UserInfoResponse(
+            user.getId(),
+            user.getUsername(),
+            user.getEmail(),
+            user.getFirstName(),
+            user.getLastName(),
+            user.getPhone(),
+            authentication.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .toList(),
+            user.isEnabled()
+        ));
     }
 }
