@@ -15,7 +15,6 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Check authentication status on component mount
   useEffect(() => {
     checkAuthStatus();
   }, []);
@@ -25,7 +24,6 @@ export const AuthProvider = ({ children }) => {
       const response = await fetch('http://localhost:8080/api/auth/status', {
         credentials: 'include'
       });
-      
       if (response.ok) {
         const userData = await response.json();
         setIsAuthenticated(true);
@@ -55,7 +53,6 @@ export const AuthProvider = ({ children }) => {
       });
 
       if (response.ok) {
-        // Fetch updated user data after successful login
         await checkAuthStatus();
         return { success: true };
       } else {
@@ -95,4 +92,4 @@ export const AuthProvider = ({ children }) => {
       {children}
     </AuthContext.Provider>
   );
-}; 
+};
