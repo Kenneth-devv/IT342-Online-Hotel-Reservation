@@ -1,22 +1,57 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import Header from '../components/Header';
 import "../styles/BookingPage.css";
 
 const BookingPage = () => {
   const navigate = useNavigate();
-  const { hotelId } = useParams();
+  const location = useLocation();
+  const { hotelName } = useParams();
+  const { user, isAuthenticated } = useAuth();
   
-  // Hotel data (same as in HotelPage)
-  const allHotels = [
-    { id: 1, name: 'NuStar Resort & Casino', price: '89,000', location: 'Cebu City, Cebu', country: 'Philippines', city: 'Cebu', type: 'Luxury Hotels', image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&h=400&fit=crop', rating: 4.8, amenities: ['Pool', 'Casino', 'Spa', 'Restaurant', 'WiFi'] },
-    { id: 2, name: 'Mandarin Oriental Cebu', price: '95,000', location: 'Mandaue City, Cebu', country: 'Philippines', city: 'Cebu', type: 'Luxury Hotels', image: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=600&h=400&fit=crop', rating: 4.9, amenities: ['Pool', 'Spa', 'Restaurant', 'Gym', 'WiFi'] },
-    { id: 3, name: 'Quest Hotel & Conference Center', price: '65,000', location: 'Cebu City, Cebu', country: 'Philippines', city: 'Cebu', type: 'Hotels', image: 'https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=600&h=400&fit=crop', rating: 4.5, amenities: ['Pool', 'Restaurant', 'Conference Room', 'WiFi'] },
-    { id: 4, name: 'Cebu R Hotel - Capitol', price: '55,000', location: 'Cebu City, Cebu', country: 'Philippines', city: 'Cebu', type: 'Hotels', image: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=600&h=400&fit=crop', rating: 4.3, amenities: ['Restaurant', 'WiFi', 'Parking'] },
-    { id: 5, name: 'Crimson Resort & Spa Mactan', price: '125,000', location: 'Mactan Island, Cebu', country: 'Philippines', city: 'Cebu', type: 'Resorts', image: 'https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=600&h=400&fit=crop', rating: 4.7, amenities: ['Beach', 'Pool', 'Spa', 'Restaurant', 'Water Sports'] },
-    { id: 6, name: 'Shangri-La Mactan Resort & Spa', price: '150,000', location: 'Mactan Island, Cebu', country: 'Philippines', city: 'Cebu', type: 'Resorts', image: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=600&h=400&fit=crop', rating: 4.9, amenities: ['Beach', 'Pool', 'Spa', 'Golf', 'Multiple Restaurants'] }
-  ];
+  // Get hotel and room data from navigation state
+  const hotelFromState = location.state?.hotel;
+  const selectedRoomFromState = location.state?.selectedRoom;
 
-  const [selectedHotel, setSelectedHotel] = useState(null);
+  // Default hotel data structure for fallback
+  const getDefaultHotelData = () => ({
+    id: 1,
+    name: 'Luxurious Grand Hotel Cebu',
+    location: 'Cebu City, Cebu - City center, near Ayala Center',
+    rating: 4.9,
+    reviews: 2500,
+    description: 'Experience unparalleled luxury and comfort at the Grand Hotel Cebu.',
+    mainImage: 'https://placehold.co/1200x600/4F46E5/FFFFFF?text=Grand+Hotel+Exterior',
+    image: 'https://placehold.co/600x400/4F46E5/FFFFFF?text=Grand+Hotel+Exterior',
+    pricePerNight: 9500,
+    price: '₱9,500',
+    currency: '₱',
+    type: 'Luxury Hotels',
+    amenities: [
+      'Free WiFi',
+      'Swimming Pool',
+      'Gym/Fitness Center',
+      'Restaurant',
+      'Bar/Lounge',
+      'Free Parking',
+      'Air conditioning',
+      '24-hour front desk',
+      'Spa services',
+      'Room service',
+      'Breakfast included',
+      'Concierge service'
+    ]
+  });
+
+  // Get the actual hotel data
+  const selectedHotel = hotelFromState || getDefaultHotelData();
+  const selectedRoom = selectedRoomFromState || {
+    name: 'Deluxe King Room',
+    price: selectedHotel.pricePerNight || 9500,
+    description: 'Spacious room with a king-size bed, perfect for couples or solo travelers.'
+  };
+
   const [bookingData, setBookingData] = useState({
     firstName: '',
     lastName: '',
@@ -26,18 +61,41 @@ const BookingPage = () => {
     checkOut: '',
     guests: 1,
     rooms: 1,
-    specialRequests: ''
+    specialRequests: '',
+    bookingFor: 'self' // 'self' or 'other'
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [bookingConfirmed, setBookingConfirmed] = useState(false);
 
+  // Auto-populate or clear guest information based on booking selection
   useEffect(() => {
-    const hotel = allHotels.find(h => h.id === parseInt(hotelId));
-    setSelectedHotel(hotel);
-  }, [hotelId]);
+    if (bookingData.bookingFor === 'self' && isAuthenticated && user) {
+      setBookingData(prev => ({
+        ...prev,
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        email: user.email || '',
+        phone: user.phone || ''
+      }));
+    } else if (bookingData.bookingFor === 'other') {
+      setBookingData(prev => ({
+        ...prev,
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: ''
+      }));
+    }
+  }, [bookingData.bookingFor, isAuthenticated, user]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    
+    // Prevent selecting "self" if user is not authenticated
+    if (name === 'bookingFor' && value === 'self' && !isAuthenticated) {
+      return;
+    }
+    
     setBookingData(prev => ({
       ...prev,
       [name]: value
@@ -56,9 +114,8 @@ const BookingPage = () => {
   };
 
   const calculateTotal = () => {
-    if (!selectedHotel) return 0;
     const nights = calculateNights();
-    const pricePerNight = parseInt(selectedHotel.price.replace(/,/g, ''));
+    const pricePerNight = selectedRoom.price || selectedHotel.pricePerNight || 9500;
     return nights * pricePerNight * bookingData.rooms;
   };
 
@@ -69,6 +126,8 @@ const BookingPage = () => {
     const requestBody = {
       hotelId: selectedHotel.id,
       hotelName: selectedHotel.name,
+      roomType: selectedRoom.name,
+      bookingFor: bookingData.bookingFor,
       checkIn: bookingData.checkIn,
       checkOut: bookingData.checkOut,
       guestDetails: {
@@ -112,22 +171,7 @@ const BookingPage = () => {
     }
   };
 
-  const handleNavigation = (path) => {
-    navigate(path);
-  };
 
-  if (!selectedHotel) {
-    return (
-      <div className="booking-page">
-        <div className="loading">
-          <h2>Hotel not found</h2>
-            <button onClick={() => navigate('/hotelpage')} className="back-btn">
-      Back to Hotels
-    </button>
-        </div>
-      </div>
-    );
-  }
 
   if (bookingConfirmed) {
     return (
@@ -137,19 +181,21 @@ const BookingPage = () => {
           <h2>Booking Confirmed!</h2>
           <div className="confirmation-details">
             <p><strong>Hotel:</strong> {selectedHotel.name}</p>
+            <p><strong>Room Type:</strong> {selectedRoom.name}</p>
+            <p><strong>Booking For:</strong> {bookingData.bookingFor === 'self' ? 'I am staying' : 'Someone else is staying'}</p>
             <p><strong>Guest:</strong> {bookingData.firstName} {bookingData.lastName}</p>
             <p><strong>Check-in:</strong> {bookingData.checkIn}</p>
             <p><strong>Check-out:</strong> {bookingData.checkOut}</p>
-            <p><strong>Total:</strong> ${calculateTotal().toLocaleString()}</p>
+            <p><strong>Total:</strong> ₱{calculateTotal().toLocaleString()}</p>
           </div>
-          <div className="confirmation-actions">
-            <button onClick={() => navigate('/hotels')} className="primary-btn">
-              Book Another Hotel
-            </button>
-             <button onClick={() => navigate('/hotelpage')} className="back-btn">
-      Back to Hotels
-    </button>
-          </div>
+                      <div className="confirmation-actions">
+              <button onClick={() => navigate('/')} className="primary-btn">
+                Book Another Hotel
+              </button>
+              <button onClick={() => navigate('/')} className="back-btn">
+                Back to Home
+              </button>
+            </div>
         </div>
       </div>
     );
@@ -157,27 +203,13 @@ const BookingPage = () => {
 
   return (
     <div className="booking-page">
-      {/* Header */}
-      <header className="header">
-        <div className="nav-container">
-          <div className="logo">
-            <h1>Bright Hotel</h1>
-          </div>
-          <nav className="navigation">
-            <span className="nav-link" onClick={() => handleNavigation('/')}>Home</span>
-            <span className="nav-link" onClick={() => handleNavigation('/hotels')}>Hotels for sale</span>
-            <span className="nav-link" onClick={() => handleNavigation('/news')}>News</span>
-            <span className="nav-link" onClick={() => handleNavigation('/contact')}>Contacts</span>
-          </nav>
-          <button className="sign-in-btn">Sign In</button>
-        </div>
-      </header>
+      <Header />
 
       <div className="booking-container">
         {/* Hotel Information */}
         <div className="hotel-summary">
           <div className="hotel-image-large">
-            <img src={selectedHotel.image} alt={selectedHotel.name} />
+            <img src={selectedHotel.image || selectedHotel.mainImage} alt={selectedHotel.name} />
             <div className="hotel-rating">
               <span className="rating-score">{selectedHotel.rating}</span>
               <div className="stars">
@@ -193,9 +225,16 @@ const BookingPage = () => {
           <div className="hotel-details">
             <h1>{selectedHotel.name}</h1>
             <p className="hotel-location">{selectedHotel.location}</p>
-            <p className="hotel-type">{selectedHotel.type}</p>
+            <p className="hotel-type">{selectedHotel.type || 'Luxury Hotels'}</p>
+            
+            {/* Room Type Information */}
+            <div className="room-type-info">
+              <h3>Selected Room: {selectedRoom.name}</h3>
+              <p className="room-description">{selectedRoom.description}</p>
+            </div>
+            
             <div className="hotel-price-display">
-              <span className="price">${selectedHotel.price}</span>
+              <span className="price">₱{(selectedRoom.price || selectedHotel.pricePerNight || 9500).toLocaleString()}</span>
               <span className="per-night">per night</span>
             </div>
             
@@ -217,6 +256,43 @@ const BookingPage = () => {
           <form onSubmit={handleSubmit} className="booking-form">
             <div className="form-section">
               <h3>Guest Information</h3>
+              
+              {/* Booking For Selection */}
+              <div className="form-group">
+                <label>Who is this booking for?</label>
+                <div className="booking-for-options">
+                  <label className="radio-option">
+                    <input
+                      type="radio"
+                      name="bookingFor"
+                      value="self"
+                      checked={bookingData.bookingFor === 'self'}
+                      onChange={handleInputChange}
+                      disabled={!isAuthenticated}
+                    />
+                    <span className="radio-label">
+                      I am the one staying
+                      {!isAuthenticated && <span className="text-sm text-gray-500 ml-2">(Login required)</span>}
+                    </span>
+                  </label>
+                  <label className="radio-option">
+                    <input
+                      type="radio"
+                      name="bookingFor"
+                      value="other"
+                      checked={bookingData.bookingFor === 'other'}
+                      onChange={handleInputChange}
+                    />
+                    <span className="radio-label">Someone else is staying</span>
+                  </label>
+                </div>
+                {!isAuthenticated && bookingData.bookingFor === 'self' && (
+                  <p className="text-sm text-blue-600 mt-2">
+                    Please log in to auto-fill your information. You can still book for someone else without logging in.
+                  </p>
+                )}
+              </div>
+
               <div className="form-row">
                 <div className="form-group">
                   <label htmlFor="firstName">First Name *</label>
@@ -350,6 +426,18 @@ const BookingPage = () => {
                 <span>{selectedHotel.name}</span>
               </div>
               <div className="summary-row">
+                <span>Room Type:</span>
+                <span>{selectedRoom.name}</span>
+              </div>
+              <div className="summary-row">
+                <span>Booking For:</span>
+                <span>{bookingData.bookingFor === 'self' ? 'I am staying' : 'Someone else is staying'}</span>
+              </div>
+              <div className="summary-row">
+                <span>Guest:</span>
+                <span>{bookingData.firstName} {bookingData.lastName}</span>
+              </div>
+              <div className="summary-row">
                 <span>Dates:</span>
                 <span>{bookingData.checkIn} to {bookingData.checkOut}</span>
               </div>
@@ -367,24 +455,24 @@ const BookingPage = () => {
               </div>
               <div className="summary-row total">
                 <span>Total Amount:</span>
-                <span>${calculateTotal().toLocaleString()}</span>
+                <span>₱{calculateTotal().toLocaleString()}</span>
               </div>
             </div>
 
             <div className="form-actions">
               <button 
                 type="button" 
-                onClick={() => navigate('/hotels')} 
+                onClick={() => navigate('/')} 
                 className="secondary-btn"
               >
-                Back to Hotels
+                Back to Home
               </button>
               <button 
                 type="submit" 
                 className="primary-btn"
                 disabled={isSubmitting || calculateNights() <= 0}
               >
-                {isSubmitting ? 'Processing...' : `Book Now - $${calculateTotal().toLocaleString()}`}
+                {isSubmitting ? 'Processing...' : `Book Now - ₱${calculateTotal().toLocaleString()}`}
               </button>
             </div>
           </form>
