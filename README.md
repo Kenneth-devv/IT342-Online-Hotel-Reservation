@@ -139,7 +139,7 @@ Our RESTful API is fully documented and interactive:
 <tr>
 <td align="center">
 <img src="https://github.com/identicons/1.png" width="100px;" alt="Kieth Jan T. Ambos"/><br />
-<sub><b>Kieth Jan T. Ambos</b></sub><br />
+<sub><b>Kenneth Jan T. Ambos</b></sub><br />
 <i>🚀 Project Lead & Backend Developer</i><br />
 <a href="https://github.com/Kenneth-devv">📧 Contact</a>
 </td>
