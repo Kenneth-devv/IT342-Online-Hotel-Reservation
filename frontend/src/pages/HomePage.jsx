@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Search, Calendar, Users, MapPin, Star, Award, ShieldCheck, Headphones, Facebook, Twitter, Instagram, Linkedin, Plus, Minus, Building2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import backgroundIMG from '../assets/images/backgroundIMG.jpg';
-import Header from '../components/Header'; // Import the new Header component
+import Header from '../components/Header';
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -81,8 +81,7 @@ const HomePage = () => {
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     console.log("Searching with:", searchData);
-    // Navigate to search results page (e.g., /search-results)
-    navigate('/search-results'); // Example navigation
+    navigate('/search-results', { state: { searchData: searchData } });
   };
 
   const getGuestSummary = () => {
@@ -92,15 +91,14 @@ const HomePage = () => {
     return `${roomText}, ${adultText}${childrenText}`;
   };
 
-  // Dummy hotel data from HotelPage.jsx, adapted for HomePage's featuredHotels structure
   const luxuriousGrandHotelCebu = {
-    id: 5, // Assign a new unique ID
+    id: 5,
     name: 'Luxurious Grand Hotel Cebu',
     location: 'Cebu City, Cebu - City center, near Ayala Center',
-    price: '₱9,500', // Formatted price string
-    image: 'https://placehold.co/600x400/4F46E5/FFFFFF?text=Grand+Hotel+Exterior', // Using mainImage as image
+    price: '₱9,500',
+    image: 'https://placehold.co/600x400/4F46E5/FFFFFF?text=Grand+Hotel+Exterior',
     description: 'Experience unparalleled luxury and comfort at the Grand Hotel Cebu. Located in the heart of the city, our hotel offers exquisite rooms, world-class dining, and exceptional service. Perfect for both business and leisure travelers.',
-    rating: 4.9, // Changed from 9.1 to 4.9 as requested
+    rating: 4.9,
     reviews: 2500,
     mainImage: 'https://placehold.co/1200x600/4F46E5/FFFFFF?text=Grand+Hotel+Exterior',
     galleryImages: [
@@ -142,7 +140,7 @@ const HomePage = () => {
       location: 'Bonifacio Global City, Taguig',
       price: '₱8,500',
       image: 'https://placehold.co/600x400/A78BFA/FFFFFF?text=Hyatt+Manila',
-      description: 'Experience luxury and comfort in the heart of the city. Enjoy our world-class amenities and exceptional service for an unforgettable stay.',
+      description: 'Experience luxury and comfort in the heart of the city. Enjoy our world-class amenities and exceptional service for an and unforgettable stay.',
       rating: 4.8,
       reviews: 1500,
       mainImage: 'https://placehold.co/1200x600/A78BFA/FFFFFF?text=Grand+Hyatt+Exterior',
@@ -235,12 +233,12 @@ const HomePage = () => {
         email: 'info@conradmanila.com'
       }
     },
-    luxuriousGrandHotelCebu // Added the new hotel here, making it 4 hotels total
+    luxuriousGrandHotelCebu
   ];
 
   return (
     <div className="min-h-screen bg-gray-50 font-inter text-gray-800">
-      <Header /> {/* Use the new Header component */}
+      <Header />
 
       {/* Hero Section */}
       <section className="relative h-[60vh] md:h-[70vh] bg-cover bg-center flex items-center justify-center text-white"
@@ -253,7 +251,6 @@ const HomePage = () => {
           <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto drop-shadow-md">
             Discover amazing hotels and experiences tailored just for you.
           </p>
-          {/* Removed the "Explore Hotels" button */}
         </div>
       </section>
 
@@ -434,7 +431,7 @@ const HomePage = () => {
               <div
                 key={hotel.id}
                 className="bg-white rounded-3xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-100 flex flex-col cursor-pointer"
-                onClick={() => navigate(`/hotel/${encodeURIComponent(hotel.name)}/details`, { state: { hotel: hotel } })} // Navigate to HotelDetailsPage with hotel data
+                onClick={() => navigate(`/hotel/${encodeURIComponent(hotel.name)}/details`, { state: { hotel: hotel } })}
               >
                 <img src={hotel.image} alt={hotel.name} className="w-full h-48 object-cover rounded-t-3xl" />
                 <div className="p-6 flex flex-col flex-grow">
@@ -452,7 +449,7 @@ const HomePage = () => {
                   </div>
                   <button
                     onClick={(e) => {
-                      e.stopPropagation(); // Prevent card onClick from firing
+                      e.stopPropagation();
                       navigate(`/hotel/${encodeURIComponent(hotel.name)}/details`, { state: { hotel: hotel } });
                     }}
                     className="mt-6 w-full px-4 py-3 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-colors font-medium shadow-md"
@@ -465,7 +462,7 @@ const HomePage = () => {
           </div>
           <div className="text-center mt-12">
             <button
-              onClick={() => navigate('/search-results')} // Redirect to SearchResultsPage
+              onClick={() => navigate('/search-results')}
               className="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-full shadow-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 transform hover:scale-105"
             >
               See More Hotels
@@ -554,8 +551,8 @@ const HomePage = () => {
         <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand Info */}
           <div>
-                      <span className="text-2xl font-bold text-white">ReserveEase</span>
-          <p className="text-sm mt-2">Your ultimate partner in finding the perfect hotel for every journey.</p>
+            <span className="text-2xl font-bold text-white">ReserveEase</span>
+            <p className="text-sm mt-2">Your ultimate partner in finding the perfect hotel for every journey.</p>
           </div>
 
           {/* Quick Links */}

@@ -1,15 +1,20 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { Search, MapPin, Star, ChevronDown, SlidersHorizontal, Wifi, Coffee, Car, Dumbbell, Snowflake, PawPrint, Baby, Briefcase, Utensils, Plane, X } from 'lucide-react';
 import Header from '../components/Header';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const SearchResultsPage = () => {
   const navigate = useNavigate();
+  const location = useLocation(); // Get location object to access state
+
+  // Retrieve searchData from location.state
+  const { searchData } = location.state || {};
+  // console.log("Search Data received:", searchData); // For debugging, can be removed
 
   const SLIDER_MAX_VALUE = 50000;
 
   const [minPrice, setMinPrice] = useState(0);
-  const [maxPrice, setMaxPrice] = useState(50000);
+  const [maxPrice, setMaxPrice] = useState(SLIDER_MAX_VALUE);
 
   const [filters, setFilters] = useState({
     bestInLuxury: false,
@@ -161,7 +166,6 @@ const SearchResultsPage = () => {
     }
   };
 
-  // Wrapped allHotelListings in useMemo to prevent re-creation on every render
   const allHotelListings = useMemo(() => [
     {
       id: 1,
@@ -308,7 +312,6 @@ const SearchResultsPage = () => {
       description: 'A large hotel and casino complex offering entertainment, dining, and comfortable accommodations near IT Park.',
       roomType: 'Standard Room',
     },
-    // New dummy hotel listings
     {
       id: 6,
       name: 'Crimson Resort and Spa Mactan',
@@ -450,48 +453,97 @@ const SearchResultsPage = () => {
   ], []);
 
   const filteredHotels = useMemo(() => {
-    return allHotelListings.filter(hotel => {
-      // Price range filter
-      if (hotel.price < minPrice || hotel.price > maxPrice) {
-        return false;
-      }
+    let currentHotels = allHotelListings;
 
-      // Star rating filter: Display hotels with rating >= selected star.
-      // If filters.starRating is 0 (nothing selected), this condition is skipped,
-      // and all hotels are considered for star rating.
-      if (filters.starRating > 0 && hotel.rating < filters.starRating) {
-        return false;
-      }
+    // Apply destination filter if provided from searchData
+    if (searchData && searchData.destination) {
+      const lowerCaseDestination = searchData.destination.toLowerCase();
+      currentHotels = currentHotels.filter(hotel =>
+        hotel.location.toLowerCase().includes(lowerCaseDestination) ||
+        hotel.name.toLowerCase().includes(lowerCaseDestination)
+      );
+    }
 
-      // Amenity filters
-      if (filters.bestInLuxury && hotel.award !== 'Best Luxury Hotel') return false;
-      if (filters.swimmingPool && !hotel.amenities.includes('Swimming Pool')) return false;
-      if (filters.gymFitness && !hotel.amenities.includes('Gym/Fitness Center')) return false;
-      if (filters.airConditioning && !hotel.amenities.includes('Air conditioning')) return false;
-      if (filters.petFriendly && !hotel.amenities.includes('Pet-friendly')) return false;
-      if (filters.familyFriendly && !hotel.amenities.includes('Family-friendly')) return false;
-      if (filters.businessFacilities && !hotel.amenities.includes('Business facilities')) return false;
-      if (filters.spaServices && !hotel.amenities.includes('Spa services')) return false;
-      if (filters.freeBreakfast && !hotel.amenities.includes('Breakfast included')) return false;
-      if (filters.restaurantOnSite && !hotel.amenities.includes('Restaurant')) return false;
-      if (filters.airportShuttle && !hotel.amenities.includes('Airport shuttle')) return false;
-      // Note: 'Book without credit card', 'Pay now', 'Free cancellation', 'Non-smoking rooms',
-      // and 'Accessible facilities' are not explicitly in dummy data amenities,
-      // so they will not filter unless added to the hotel.amenities array or a separate property.
+    // Apply rooms and adults filter
+    if (searchData && searchData.rooms && searchData.adults) {
+      // For simplicity, assuming each room can accommodate at least one adult.
+      // This logic can be expanded based on specific room capacities if available in hotel data.
+      currentHotels = currentHotels.filter(hotel => {
+        // This is a simplified check. A real-world scenario would need more complex room capacity logic.
+        // For now, we'll just check if the hotel location matches the destination.
+        // The room and adult count from searchData is primarily for the search input display.
+        return true; // All hotels are considered for room/adult count in this simplified demo
+      });
+    }
 
-      // Room type filters
-      const selectedRoomTypes = Object.keys(filters.roomType).filter(key => filters.roomType[key]);
-      if (selectedRoomTypes.length > 0) {
+
+    // Apply price range filter
+    currentHotels = currentHotels.filter(hotel =>
+      hotel.price >= minPrice && hotel.price <= maxPrice
+    );
+
+    // Apply star rating filter: Display hotels with rating >= selected star.
+    if (filters.starRating > 0) {
+      currentHotels = currentHotels.filter(hotel => hotel.rating >= filters.starRating);
+    }
+
+    // Amenity filters
+    if (filters.bestInLuxury) {
+      currentHotels = currentHotels.filter(hotel => hotel.award === 'Best Luxury Hotel');
+    }
+    if (filters.swimmingPool) {
+      currentHotels = currentHotels.filter(hotel => hotel.amenities.includes('Swimming Pool'));
+    }
+    if (filters.gymFitness) {
+      currentHotels = currentHotels.filter(hotel => hotel.amenities.includes('Gym/Fitness Center'));
+    }
+    if (filters.airConditioning) {
+      currentHotels = currentHotels.filter(hotel => hotel.amenities.includes('Air conditioning'));
+    }
+    if (filters.petFriendly) {
+      currentHotels = currentHotels.filter(hotel => hotel.amenities.includes('Pet-friendly'));
+    }
+    if (filters.familyFriendly) {
+      currentHotels = currentHotels.filter(hotel => hotel.amenities.includes('Family-friendly'));
+    }
+    if (filters.businessFacilities) {
+      currentHotels = currentHotels.filter(hotel => hotel.amenities.includes('Business facilities'));
+    }
+    if (filters.spaServices) {
+      currentHotels = currentHotels.filter(hotel => hotel.amenities.includes('Spa services'));
+    }
+    if (filters.freeBreakfast) {
+      currentHotels = currentHotels.filter(hotel => hotel.amenities.includes('Breakfast included'));
+    }
+    if (filters.restaurantOnSite) {
+      currentHotels = currentHotels.filter(hotel => hotel.amenities.includes('Restaurant'));
+    }
+    if (filters.airportShuttle) {
+      currentHotels = currentHotels.filter(hotel => hotel.amenities.includes('Airport shuttle'));
+    }
+
+    // Room type filters
+    const selectedRoomTypes = Object.keys(filters.roomType).filter(key => filters.roomType[key]);
+    if (selectedRoomTypes.length > 0) {
+      currentHotels = currentHotels.filter(hotel => {
         const hasMatchingRoomType = selectedRoomTypes.some(type => {
           const readableRoomType = type.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
           return hotel.roomType === readableRoomType;
         });
-        if (!hasMatchingRoomType) return false;
-      }
+        return hasMatchingRoomType;
+      });
+    }
 
-      return true;
+    // Apply "Best Match" sorting: by rating (desc) then by reviews (desc)
+    currentHotels.sort((a, b) => {
+      if (b.rating !== a.rating) {
+        return b.rating - a.rating; // Sort by rating descending
+      }
+      return b.reviews - a.reviews; // Then by reviews descending
     });
-  }, [minPrice, maxPrice, filters, allHotelListings]); // allHotelListings is now stable due to its own useMemo
+
+    return currentHotels;
+  }, [minPrice, maxPrice, filters, allHotelListings, searchData]);
 
   return (
     <div className="min-h-screen bg-gray-100 font-inter text-gray-800">
@@ -505,6 +557,7 @@ const SearchResultsPage = () => {
             type="text"
             placeholder="Hotel Name"
             className="flex-grow focus:outline-none text-gray-700"
+            defaultValue={searchData?.destination || ''} // Display initial search destination if available
           />
         </div>
       </section>
