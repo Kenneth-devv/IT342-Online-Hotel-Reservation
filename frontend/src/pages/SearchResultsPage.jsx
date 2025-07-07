@@ -1,15 +1,15 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
-import { Search, MapPin, Star, ChevronDown, SlidersHorizontal, Wifi, Coffee, Car, Dumbbell, Snowflake, PawPrint, Baby, Briefcase, Utensils, Plane, X } from 'lucide-react'; // Removed unused icons
+import { Search, MapPin, Star, ChevronDown, SlidersHorizontal, Wifi, Coffee, Car, Dumbbell, Snowflake, PawPrint, Baby, Briefcase, Utensils, Plane, X } from 'lucide-react';
 import Header from '../components/Header';
 import { useNavigate } from 'react-router-dom';
 
 const SearchResultsPage = () => {
   const navigate = useNavigate();
 
-  const SLIDER_MAX_VALUE = 1500000;
+  const SLIDER_MAX_VALUE = 50000;
 
   const [minPrice, setMinPrice] = useState(0);
-  const [maxPrice, setMaxPrice] = useState(1349280);
+  const [maxPrice, setMaxPrice] = useState(50000);
 
   const [filters, setFilters] = useState({
     bestInLuxury: false,
@@ -28,7 +28,7 @@ const SearchResultsPage = () => {
     airportShuttle: false,
     nonSmokingRooms: false,
     accessibleFacilities: false,
-    starRating: 0, // 0 means no star filter applied
+    starRating: 0,
     roomType: {
       standardRoom: false,
       deluxeRoom: false,
@@ -36,7 +36,6 @@ const SearchResultsPage = () => {
       familyRoom: false,
     }
   });
-  // Removed viewMode and setViewMode as they are no longer used
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   const sliderRef = useRef(null);
@@ -162,62 +161,61 @@ const SearchResultsPage = () => {
     }
   };
 
-  const luxuriousGrandHotelCebu = {
-    id: 1,
-    name: 'Luxurious Grand Hotel Cebu',
-    location: 'Cebu City, Cebu - City center, near Ayala Center',
-    rating: 5, // Changed to integer star rating
-    reviews: 2500,
-    award: 'Best Luxury Hotel',
-    images: [
-      'https://placehold.co/300x200/4F46E5/FFFFFF?text=Grand+Hotel+Exterior',
-      'https://placehold.co/300x200/3730A3/FFFFFF?text=Lobby',
-      'https://placehold.co/300x200/1E293B/FFFFFF?text=Room',
-    ],
-    amenities: [
-      'Free WiFi',
-      'Swimming Pool',
-      'Gym/Fitness Center',
-      'Restaurant',
-      'Bar/Lounge',
-      'Free Parking',
-      'Air conditioning',
-      '24-hour front desk',
-      'Spa services',
-      'Room service',
-      'Breakfast included',
-      'Concierge service'
-    ],
-    price: 9500,
-    agodaPreferred: true,
-    coords: { lat: 10.3157, lng: 123.8800 },
-    mainImage: 'https://placehold.co/1200x600/4F46E5/FFFFFF?text=Grand+Hotel+Exterior',
-    galleryImages: [
-      'https://placehold.co/400x300/3730A3/FFFFFF?text=Lobby',
-      'https://placehold.co/400x300/1E293B/FFFFFF?text=Room',
-      'https://placehold.co/400x300/1D4ED8/FFFFFF?text=Pool',
-      'https://placehold.co/400x300/2563EB/FFFFFF?text=Restaurant',
-      'https://placehold.co/400x300/3B82F6/FFFFFF?text=Spa',
-    ],
-    pricePerNight: 9500,
-    currency: '₱',
-    checkInTime: '3:00 PM',
-    checkOutTime: '12:00 PM',
-    contact: {
-      phone: '+63 912 345 6789',
-      email: 'info@grandhotel.com'
+  // Wrapped allHotelListings in useMemo to prevent re-creation on every render
+  const allHotelListings = useMemo(() => [
+    {
+      id: 1,
+      name: 'Luxurious Grand Hotel Cebu',
+      location: 'Cebu City, Cebu - City center, near Ayala Center',
+      rating: 5,
+      reviews: 2500,
+      award: 'Best Luxury Hotel',
+      images: [
+        'https://placehold.co/300x200/4F46E5/FFFFFF?text=Grand+Hotel+Exterior',
+        'https://placehold.co/300x200/3730A3/FFFFFF?text=Lobby',
+        'https://placehold.co/300x200/1E293B/FFFFFF?text=Room',
+      ],
+      amenities: [
+        'Free WiFi',
+        'Swimming Pool',
+        'Gym/Fitness Center',
+        'Restaurant',
+        'Bar/Lounge',
+        'Free Parking',
+        'Air conditioning',
+        '24-hour front desk',
+        'Spa services',
+        'Room service',
+        'Breakfast included',
+        'Concierge service'
+      ],
+      price: 9500,
+      agodaPreferred: true,
+      coords: { lat: 10.3157, lng: 123.8800 },
+      mainImage: 'https://placehold.co/1200x600/4F46E5/FFFFFF?text=Grand+Hotel+Exterior',
+      galleryImages: [
+        'https://placehold.co/400x300/3730A3/FFFFFF?text=Lobby',
+        'https://placehold.co/400x300/1E293B/FFFFFF?text=Room',
+        'https://placehold.co/400x300/1D4ED8/FFFFFF?text=Pool',
+        'https://placehold.co/400x300/2563EB/FFFFFF?text=Restaurant',
+        'https://placehold.co/400x300/3B82F6/FFFFFF?text=Spa',
+      ],
+      pricePerNight: 9500,
+      currency: '₱',
+      checkInTime: '3:00 PM',
+      checkOutTime: '12:00 PM',
+      contact: {
+        phone: '+63 912 345 6789',
+        email: 'info@grandhotel.com'
+      },
+      description: 'Experience unparalleled luxury and comfort at the Grand Hotel Cebu. Located in the heart of the city, our hotel offers exquisite rooms, world-class dining, and exceptional service. Perfect for both business and leisure travelers.',
+      roomType: 'Suite',
     },
-    description: 'Experience unparalleled luxury and comfort at the Grand Hotel Cebu. Located in the heart of the city, our hotel offers exquisite rooms, world-class dining, and exceptional service. Perfect for both business and leisure travelers.',
-    roomType: 'Suite',
-  };
-
-  const allHotelListings = [
-    luxuriousGrandHotelCebu,
     {
       id: 2,
       name: 'Yello Hotel Cebu Powered By Cocotel',
       location: 'Cebu City, Cebu - 1.3 km to center',
-      rating: 3, // Corrected to 3 to match "Best rated 3-star hotels"
+      rating: 3,
       reviews: 3750,
       award: 'Best rated 3-star hotels',
       images: [
@@ -242,7 +240,7 @@ const SearchResultsPage = () => {
       id: 3,
       name: 'Sugbutel Family Hotel Cebu powered by Cocotel',
       location: 'Cebu City, Cebu',
-      rating: 3, // Changed to integer star rating
+      rating: 3,
       reviews: 2013,
       images: [
         'https://placehold.co/300x200/4F46E5/FFFFFF?text=Hotel+3',
@@ -266,7 +264,7 @@ const SearchResultsPage = () => {
       id: 4,
       name: 'Quest Hotel & Conference Center Cebu',
       location: 'Cebu City, Cebu - City center',
-      rating: 4, // Changed to integer star rating
+      rating: 4,
       reviews: 18900,
       images: [
         'https://placehold.co/300x200/1D4ED8/FFFFFF?text=Hotel+4',
@@ -290,7 +288,7 @@ const SearchResultsPage = () => {
       id: 5,
       name: 'Waterfront Cebu City Hotel & Casino',
       location: 'Cebu City, Cebu - IT Park',
-      rating: 3, // Changed to integer star rating
+      rating: 3,
       reviews: 12500,
       images: [
         'https://placehold.co/300x200/065F46/FFFFFF?text=Hotel+5',
@@ -309,8 +307,147 @@ const SearchResultsPage = () => {
       contact: { phone: '', email: '' },
       description: 'A large hotel and casino complex offering entertainment, dining, and comfortable accommodations near IT Park.',
       roomType: 'Standard Room',
+    },
+    // New dummy hotel listings
+    {
+      id: 6,
+      name: 'Crimson Resort and Spa Mactan',
+      location: 'Lapu-Lapu City, Mactan Island - Beachfront',
+      rating: 5,
+      reviews: 4000,
+      award: 'Best Beach Resort',
+      images: [
+        'https://placehold.co/300x200/F97316/FFFFFF?text=Crimson+Exterior',
+        'https://placehold.co/300x200/EA580C/FFFFFF?text=Crimson+Pool',
+        'https://placehold.co/300x200/C2410C/FFFFFF?text=Crimson+Room',
+      ],
+      amenities: [
+        'Free WiFi', 'Swimming Pool', 'Private Beach', 'Spa services',
+        'Restaurant', 'Bar/Lounge', 'Kids Club', 'Airport shuttle'
+      ],
+      price: 18000,
+      agodaPreferred: true,
+      coords: { lat: 10.2800, lng: 124.0000 },
+      mainImage: 'https://placehold.co/1200x600/F97316/FFFFFF?text=Crimson+Resort+Exterior',
+      galleryImages: [],
+      pricePerNight: 18000,
+      currency: '₱',
+      checkInTime: '3:00 PM',
+      checkOutTime: '12:00 PM',
+      contact: { phone: '', email: '' },
+      description: 'An exquisite beachfront resort offering luxurious stays and a wide range of activities for all ages.',
+      roomType: 'Deluxe Room',
+    },
+    {
+      id: 7,
+      name: 'Bluewater Maribago Beach Resort',
+      location: 'Lapu-Lapu City, Mactan Island - Beachfront',
+      rating: 4,
+      reviews: 3200,
+      images: [
+        'https://placehold.co/300x200/22C55E/FFFFFF?text=Bluewater+Exterior',
+        'https://placehold.co/300x200/16A34A/FFFFFF?text=Bluewater+Pool',
+        'https://placehold.co/300x200/15803D/FFFFFF?text=Bluewater+Room',
+      ],
+      amenities: [
+        'Free WiFi', 'Swimming Pool', 'Private Beach', 'Restaurant',
+        'Bar/Lounge', 'Spa services', 'Water sports facilities'
+      ],
+      price: 12000,
+      coords: { lat: 10.2950, lng: 124.0100 },
+      mainImage: 'https://placehold.co/1200x600/22C55E/FFFFFF?text=Bluewater+Resort+Exterior',
+      galleryImages: [],
+      pricePerNight: 12000,
+      currency: '₱',
+      checkInTime: '2:00 PM',
+      checkOutTime: '11:00 AM',
+      contact: { phone: '', email: '' },
+      description: 'A tropical paradise known for its beautiful beaches and a variety of recreational activities.',
+      roomType: 'Standard Room',
+    },
+    {
+      id: 8,
+      name: 'Bayfront Hotel Cebu - Capitol Site',
+      location: 'Cebu City, Cebu - Near Capitol',
+      rating: 3,
+      reviews: 1500,
+      images: [
+        'https://placehold.co/300x200/EF4444/FFFFFF?text=Bayfront+Exterior',
+        'https://placehold.co/300x200/DC2626/FFFFFF?text=Bayfront+Lobby',
+        'https://placehold.co/300x200/B91C1C/FFFFFF?text=Bayfront+Room',
+      ],
+      amenities: [
+        'Free WiFi', 'Restaurant', '24-hour front desk', 'Air conditioning'
+      ],
+      price: 3800,
+      coords: { lat: 10.3100, lng: 123.8950 },
+      mainImage: 'https://placehold.co/1200x600/EF4444/FFFFFF?text=Bayfront+Hotel+Exterior',
+      galleryImages: [],
+      pricePerNight: 3800,
+      currency: '₱',
+      checkInTime: '2:00 PM',
+      checkOutTime: '12:00 PM',
+      contact: { phone: '', email: '' },
+      description: 'A convenient and comfortable hotel located near Cebu Capitol, ideal for both business and leisure.',
+      roomType: 'Standard Room',
+    },
+    {
+      id: 9,
+      name: 'Summit Galleria Cebu',
+      location: 'Cebu City, Cebu - Near Robinsons Galleria',
+      rating: 4,
+      reviews: 2800,
+      images: [
+        'https://placehold.co/300x200/6366F1/FFFFFF?text=Summit+Exterior',
+        'https://placehold.co/300x200/4F46E5/FFFFFF?text=Summit+Pool',
+        'https://placehold.co/300x200/4338CA/FFFFFF?text=Summit+Room',
+      ],
+      amenities: [
+        'Free WiFi', 'Swimming Pool', 'Gym/Fitness Center', 'Restaurant',
+        'Business facilities', 'Concierge service'
+      ],
+      price: 6200,
+      coords: { lat: 10.3000, lng: 123.9000 },
+      mainImage: 'https://placehold.co/1200x600/6366F1/FFFFFF?text=Summit+Galleria+Exterior',
+      galleryImages: [],
+      pricePerNight: 6200,
+      currency: '₱',
+      checkInTime: '3:00 PM',
+      checkOutTime: '12:00 PM',
+      contact: { phone: '', email: '' },
+      description: 'A modern hotel connected to a shopping mall, offering convenience and upscale amenities.',
+      roomType: 'Deluxe Room',
+    },
+    {
+      id: 10,
+      name: 'Marco Polo Plaza Cebu',
+      location: 'Cebu City, Cebu - Nivel Hills',
+      rating: 5,
+      reviews: 3500,
+      award: 'Luxury Mountain Retreat',
+      images: [
+        'https://placehold.co/300x200/06B6D4/FFFFFF?text=Marco+Polo+Exterior',
+        'https://placehold.co/300x200/0891B2/FFFFFF?text=Marco+Polo+Pool',
+        'https://placehold.co/300x200/0E7490/FFFFFF?text=Marco+Polo+Room',
+      ],
+      amenities: [
+        'Free WiFi', 'Swimming Pool', 'Gym/Fitness Center', 'Restaurant',
+        'Bar/Lounge', 'Spa services', 'Free Parking', 'Airport shuttle'
+      ],
+      price: 11000,
+      agodaPreferred: true,
+      coords: { lat: 10.3500, lng: 123.8800 },
+      mainImage: 'https://placehold.co/1200x600/06B6D4/FFFFFF?text=Marco+Polo+Plaza+Exterior',
+      galleryImages: [],
+      pricePerNight: 11000,
+      currency: '₱',
+      checkInTime: '3:00 PM',
+      checkOutTime: '12:00 PM',
+      contact: { phone: '', email: '' },
+      description: 'An iconic hotel nestled in the hills, offering panoramic city views and a serene environment.',
+      roomType: 'Suite',
     }
-  ];
+  ], []);
 
   const filteredHotels = useMemo(() => {
     return allHotelListings.filter(hotel => {
@@ -354,7 +491,7 @@ const SearchResultsPage = () => {
 
       return true;
     });
-  }, [minPrice, maxPrice, filters, allHotelListings]);
+  }, [minPrice, maxPrice, filters, allHotelListings]); // allHotelListings is now stable due to its own useMemo
 
   return (
     <div className="min-h-screen bg-gray-100 font-inter text-gray-800">
@@ -366,7 +503,7 @@ const SearchResultsPage = () => {
           <Search className="w-5 h-5 text-gray-500 mr-2" />
           <input
             type="text"
-            placeholder="Enter location"
+            placeholder="Hotel Name"
             className="flex-grow focus:outline-none text-gray-700"
           />
         </div>
@@ -677,17 +814,18 @@ const SearchResultsPage = () => {
                           e.stopPropagation();
                           navigate(`/hotel/${encodeURIComponent(hotel.name)}/details`, { state: { hotel: hotel } });
                         }}
-                        className="ml-4 px-6 py-3 bg-blue-600 text-white font-bold rounded-xl shadow-md hover:bg-blue-700 transition-colors"
+                        className="ml-4 px-6 py-3 bg-blue-600 text-white font-bold text-xl rounded-xl shadow-lg hover:bg-blue-700 transition-colors transform hover:scale-105"
                       >
-                        View Deal
+                        View Details
                       </button>
                     </div>
                   </div>
                 </div>
               ))
             ) : (
-              <div className="text-center text-gray-600 text-lg py-10">
-                No hotels found matching your selected filters.
+              <div className="text-center py-12 bg-white rounded-2xl shadow-lg">
+                <p className="text-gray-600 text-lg">No hotels found matching your criteria.</p>
+                <p className="text-gray-500 text-sm mt-2">Try adjusting your filters.</p>
               </div>
             )}
           </div>
