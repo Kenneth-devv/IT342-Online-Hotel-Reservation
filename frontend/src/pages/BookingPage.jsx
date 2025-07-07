@@ -481,7 +481,7 @@ const BookingPage = () => {
 
       {/* Footer */}
       <footer className="footer">
-        <p>&copy; 2024 Bright Hotel. All rights reserved.</p>
+        <p>&copy; 2024 ReserveEase. All rights reserved.</p>
       </footer>
     </div>
   );

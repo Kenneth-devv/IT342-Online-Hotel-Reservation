@@ -12,7 +12,9 @@ import AboutUs from './pages/AboutUs';
 import BookingPage from './pages/BookingPage';
 import SearchResultsPage from './pages/SearchResultsPage';
 import AdminDashboard from './pages/AdminDashboard';
+import HotelManagerDashboard from './pages/HotelManagerDashboard';
 import ProfilePage from './pages/ProfilePage';
+import MyBookingsPage from './pages/MyBookingsPage';
 
 
 
@@ -79,10 +81,28 @@ const App = () => {
           />
 
           <Route
+            path="/hotel-manager/dashboard"
+            element={
+              <ProtectedRoute>
+                <HotelManagerDashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
             path="/profile"
             element={
               <ProtectedRoute>
                 <ProfilePage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/my-bookings"
+            element={
+              <ProtectedRoute>
+                <MyBookingsPage />
               </ProtectedRoute>
             }
           />

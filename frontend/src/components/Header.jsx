@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Menu, X, LogOut, User, Shield, Settings, ChevronDown } from 'lucide-react';
+import { Menu, X, LogOut, User, Shield, Settings, ChevronDown, Calendar } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
@@ -43,7 +43,7 @@ const Header = () => {
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         {/* Logo */}
         <div className="flex items-center space-x-2">
-          <span className="text-2xl font-bold text-gray-900">Bright Hotel</span>
+          <span className="text-2xl font-bold text-gray-900">ReserveEase</span>
         </div>
 
         {/* Desktop Navigation */}
@@ -126,6 +126,13 @@ const Header = () => {
                     <Settings className="w-4 h-4" />
                     <span>Profile</span>
                   </button>
+                  <button
+                    onClick={() => { navigate('/my-bookings'); setIsUserDropdownOpen(false); }}
+                    className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-50 transition-colors flex items-center space-x-2"
+                  >
+                    <Calendar className="w-4 h-4" />
+                    <span>My Bookings</span>
+                  </button>
                   {(user?.roles?.includes('ADMIN') || user?.roles?.includes('ROLE_ADMIN')) && (
                     <button
                       onClick={() => { navigate('/admin/dashboard'); setIsUserDropdownOpen(false); }}
@@ -133,6 +140,15 @@ const Header = () => {
                     >
                       <Shield className="w-4 h-4" />
                       <span>Admin</span>
+                    </button>
+                  )}
+                  {(user?.roles?.includes('HOTEL_MANAGER') || user?.roles?.includes('ROLE_HOTEL_MANAGER')) && (
+                    <button
+                      onClick={() => { navigate('/hotel-manager/dashboard'); setIsUserDropdownOpen(false); }}
+                      className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-50 transition-colors flex items-center space-x-2"
+                    >
+                      <Shield className="w-4 h-4" />
+                      <span>Hotel Manager</span>
                     </button>
                   )}
                   <div className="border-t border-gray-200 my-1"></div>
@@ -228,6 +244,13 @@ const Header = () => {
                 >
                   <Settings className="w-4 h-4" />
                   <span>Profile</span>
+                </button>
+                <button
+                  onClick={() => { navigate('/my-bookings'); setIsMobileMenuOpen(false); }}
+                  className="w-full px-5 py-2 rounded-xl text-blue-600 border border-blue-600 hover:bg-blue-50 transition-colors flex items-center justify-center space-x-2"
+                >
+                  <Calendar className="w-4 h-4" />
+                  <span>My Bookings</span>
                 </button>
                 {(user?.roles?.includes('ADMIN') || user?.roles?.includes('ROLE_ADMIN')) && (
                   <button

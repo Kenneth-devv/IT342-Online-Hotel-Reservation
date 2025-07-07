@@ -21,7 +21,7 @@ const AboutUs = () => {
         {/* Hero Section */}
         <section className="text-center mb-16">
           <h1 className="text-5xl md:text-6xl font-extrabold text-gray-900 mb-6">
-            About <span className="text-blue-600">Bright Hotel</span>
+            About <span className="text-blue-600">ReserveEase</span>
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
             Your trusted partner in finding and booking premium hotels worldwide. 
@@ -64,7 +64,7 @@ const AboutUs = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div>
                 <p className="text-lg leading-relaxed mb-6">
-                  Founded with a passion for exceptional hospitality, Bright Hotel began as a small 
+                  Founded with a passion for exceptional hospitality, ReserveEase began as a small 
                   team of travel enthusiasts who believed that finding the perfect hotel should be 
                   effortless and enjoyable.
                 </p>
@@ -206,7 +206,7 @@ const AboutUs = () => {
       {/* Footer */}
       <footer className="bg-gray-900 text-gray-300 py-12 mt-16">
         <div className="container mx-auto px-4 text-center">
-          <p>&copy; 2024 Bright Hotel. All rights reserved.</p>
+          <p>&copy; 2024 ReserveEase. All rights reserved.</p>
         </div>
       </footer>
     </div>

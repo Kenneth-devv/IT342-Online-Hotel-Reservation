@@ -32,6 +32,8 @@ const ProfilePage = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
 
+
+
   useEffect(() => {
     if (user) {
       setFormData({
@@ -42,6 +44,8 @@ const ProfilePage = () => {
       });
     }
   }, [user]);
+
+
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -238,6 +242,9 @@ const ProfilePage = () => {
     setPasswordErrors({});
     setMessage({ type: '', text: '' });
   };
+
+  // Helper functions for bookings
+
 
   if (!user) {
     return (
@@ -582,6 +589,8 @@ const ProfilePage = () => {
             )}
           </div>
         </div>
+
+
       </div>
     </div>
   );

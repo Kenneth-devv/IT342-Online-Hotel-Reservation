@@ -25,6 +25,9 @@ public class OnlineHotelResrvApplication {
 			if (roleRepository.findByName("ADMIN").isEmpty()) {
 				roleRepository.save(new Role("ADMIN"));
 			}
+			if (roleRepository.findByName("HOTEL_MANAGER").isEmpty()) {
+				roleRepository.save(new Role("HOTEL_MANAGER"));
+			}
 		};
 	}
 
