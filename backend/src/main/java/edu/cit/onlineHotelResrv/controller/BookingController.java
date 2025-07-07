@@ -60,7 +60,7 @@ public class BookingController {
             Booking booking = new Booking();
             booking.setUser(user);
             booking.setHotelId(request.getHotelId());
-            booking.setHotelName(getHotelNameById(request.getHotelId()));
+            booking.setHotelName(request.getHotelName());
             booking.setCheckInDate(request.getCheckIn());
             booking.setCheckOutDate(request.getCheckOut());
             booking.setGuestFirstName(request.getGuestDetails().getFirstName());
@@ -71,7 +71,10 @@ public class BookingController {
             booking.setNumberOfRooms(request.getNumberOfRooms() != null ? request.getNumberOfRooms() : 1);
             booking.setTotalAmount(request.getTotalAmount());
             booking.setPaymentMode(request.getPaymentMode());
+            booking.setPaymentProof(request.getPaymentProof());
+            booking.setPaymentStatus("PENDING");
             booking.setSpecialRequests(request.getSpecialRequests());
+            booking.setRoomType(request.getRoomType());
 
             Booking savedBooking = bookingRepository.save(booking);
 
@@ -90,9 +93,12 @@ public class BookingController {
                 savedBooking.getNumberOfRooms(),
                 savedBooking.getTotalAmount(),
                 savedBooking.getPaymentMode(),
+                savedBooking.getPaymentProof(),
+                savedBooking.getPaymentStatus(),
                 savedBooking.getSpecialRequests(),
                 savedBooking.getStatus().toString(),
-                savedBooking.getCreatedAt()
+                savedBooking.getCreatedAt(),
+                savedBooking.getRoomType()
             );
 
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -127,9 +133,12 @@ public class BookingController {
                         booking.getNumberOfRooms(),
                         booking.getTotalAmount(),
                         booking.getPaymentMode(),
+                        booking.getPaymentProof(),
+                        booking.getPaymentStatus(),
                         booking.getSpecialRequests(),
                         booking.getStatus().toString(),
-                        booking.getCreatedAt()
+                        booking.getCreatedAt(),
+                        booking.getRoomType()
                     ))
                     .collect(Collectors.toList());
 
@@ -170,9 +179,12 @@ public class BookingController {
                 booking.getNumberOfRooms(),
                 booking.getTotalAmount(),
                 booking.getPaymentMode(),
+                booking.getPaymentProof(),
+                booking.getPaymentStatus(),
                 booking.getSpecialRequests(),
                 booking.getStatus().toString(),
-                booking.getCreatedAt()
+                booking.getCreatedAt(),
+                booking.getRoomType()
             );
 
             return ResponseEntity.ok(response);
@@ -243,9 +255,12 @@ public class BookingController {
                         booking.getNumberOfRooms(),
                         booking.getTotalAmount(),
                         booking.getPaymentMode(),
+                        booking.getPaymentProof(),
+                        booking.getPaymentStatus(),
                         booking.getSpecialRequests(),
                         booking.getStatus().toString(),
-                        booking.getCreatedAt()
+                        booking.getCreatedAt(),
+                        booking.getRoomType()
                     ))
                     .collect(Collectors.toList());
 

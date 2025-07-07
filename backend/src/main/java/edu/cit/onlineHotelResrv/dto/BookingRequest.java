@@ -11,8 +11,10 @@ public class BookingRequest {
     private Integer numberOfGuests;
     private Integer numberOfRooms;
     private String paymentMode;
+    private String paymentProof;
     private String specialRequests;
     private Double totalAmount;
+    private String roomType;
 
     public BookingRequest() {}
 
@@ -76,10 +78,18 @@ public class BookingRequest {
         return paymentMode;
     }
 
-    public void setPaymentMode(String paymentMode) {
+        public void setPaymentMode(String paymentMode) {
         this.paymentMode = paymentMode;
     }
-
+    
+    public String getPaymentProof() {
+        return paymentProof;
+    }
+    
+    public void setPaymentProof(String paymentProof) {
+        this.paymentProof = paymentProof;
+    }
+    
     public String getSpecialRequests() {
         return specialRequests;
     }
@@ -94,6 +104,13 @@ public class BookingRequest {
 
     public void setTotalAmount(Double totalAmount) {
         this.totalAmount = totalAmount;
+    }
+
+    public String getRoomType() {
+        return roomType;
+    }
+    public void setRoomType(String roomType) {
+        this.roomType = roomType;
     }
 
     public static class GuestDetails {

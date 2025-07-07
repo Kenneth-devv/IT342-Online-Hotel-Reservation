@@ -6,8 +6,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @SpringBootApplication
 public class OnlineHotelResrvApplication {
@@ -31,15 +29,4 @@ public class OnlineHotelResrvApplication {
 		};
 	}
 
-	@Configuration
-	public class PasswordEncoderRunner {
-		@Bean
-		public CommandLineRunner encodePassword() {
-			return args -> {
-				String rawPassword = "Zheq3rpg";
-				String encodedPassword = new BCryptPasswordEncoder().encode(rawPassword);
-				System.out.println("Encoded password: " + encodedPassword);
-			};
-		}
-	}
 }
