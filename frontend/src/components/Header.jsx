@@ -60,18 +60,7 @@ const Header = () => {
           >
             Home
           </button>
-          <button 
-            type="button" 
-            onClick={() => !isActive('/hotelpage') && navigate('/hotelpage')}
-            disabled={isActive('/hotelpage')}
-            className={`font-medium transition-colors ${
-              isActive('/hotelpage') 
-                ? 'text-blue-600 cursor-default' 
-                : 'text-gray-600 hover:text-blue-600'
-            }`}
-          >
-            Hotels
-          </button>
+
           <button 
             type="button" 
             onClick={() => !isActive('/search-results') && navigate('/search-results')}
@@ -184,18 +173,7 @@ const Header = () => {
             >
               Home
             </button>
-            <button 
-              type="button" 
-              onClick={() => { !isActive('/hotelpage') && navigate('/hotelpage'); setIsMobileMenuOpen(false); }} 
-              disabled={isActive('/hotelpage')}
-              className={`font-medium text-lg py-2 ${
-                isActive('/hotelpage') 
-                  ? 'text-blue-600 cursor-default' 
-                  : 'text-gray-700 hover:text-blue-600'
-              }`}
-            >
-              Hotels
-            </button>
+
             <button 
               type="button" 
               onClick={() => { !isActive('/search-results') && navigate('/search-results'); setIsMobileMenuOpen(false); }} 

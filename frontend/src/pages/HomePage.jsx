@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Search, Calendar, Users, MapPin, Star, Award, ShieldCheck, Headphones, Facebook, Twitter, Instagram, Linkedin, Plus, Minus } from 'lucide-react';
+import { Search, Calendar, Users, MapPin, Star, Award, ShieldCheck, Headphones, Facebook, Twitter, Instagram, Linkedin, Plus, Minus, Building2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import backgroundIMG from '../assets/images/backgroundIMG.jpg';
 import Header from '../components/Header'; // Import the new Header component
@@ -434,7 +434,7 @@ const HomePage = () => {
               <div
                 key={hotel.id}
                 className="bg-white rounded-3xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-100 flex flex-col cursor-pointer"
-                onClick={() => navigate('/hotelpage', { state: { hotel: hotel } })} // Navigate to HotelPage with hotel data
+                onClick={() => navigate(`/hotel/${encodeURIComponent(hotel.name)}/details`, { state: { hotel: hotel } })} // Navigate to HotelDetailsPage with hotel data
               >
                 <img src={hotel.image} alt={hotel.name} className="w-full h-48 object-cover rounded-t-3xl" />
                 <div className="p-6 flex flex-col flex-grow">
@@ -453,7 +453,7 @@ const HomePage = () => {
                   <button
                     onClick={(e) => {
                       e.stopPropagation(); // Prevent card onClick from firing
-                      navigate('/hotelpage', { state: { hotel: hotel } });
+                      navigate(`/hotel/${encodeURIComponent(hotel.name)}/details`, { state: { hotel: hotel } });
                     }}
                     className="mt-6 w-full px-4 py-3 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-colors font-medium shadow-md"
                   >
@@ -495,7 +495,7 @@ const HomePage = () => {
               <p className="text-gray-600">Our dedicated team is here to assist you anytime.</p>
             </div>
             <div className="text-center p-6 bg-green-50 rounded-2xl shadow-sm border border-green-100">
-              {/* Removed Hotel icon from here, as it's now in Header */}
+              <Building2 className="w-12 h-12 text-green-600 mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-gray-900 mb-2">Vast Selection</h3>
               <p className="text-gray-600">Choose from thousands of hotels worldwide.</p>
             </div>

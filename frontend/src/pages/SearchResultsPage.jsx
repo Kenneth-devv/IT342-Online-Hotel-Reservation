@@ -623,7 +623,7 @@ const SearchResultsPage = () => {
                 <div
                   key={hotel.id}
                   className="bg-white rounded-2xl shadow-lg flex flex-col md:flex-row overflow-hidden cursor-pointer"
-                  onClick={() => navigate('/hotelpage', { state: { hotel: hotel } })}
+                  onClick={() => navigate(`/hotel/${encodeURIComponent(hotel.name)}/details`, { state: { hotel: hotel } })}
                 >
                   <div className="relative md:w-2/5 lg:w-1/3 flex-shrink-0">
                     <img src={hotel.images[0]} alt={hotel.name} className="w-full h-64 md:h-full object-cover" />
@@ -675,7 +675,7 @@ const SearchResultsPage = () => {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          navigate('/hotelpage', { state: { hotel: hotel } });
+                          navigate(`/hotel/${encodeURIComponent(hotel.name)}/details`, { state: { hotel: hotel } });
                         }}
                         className="ml-4 px-6 py-3 bg-blue-600 text-white font-bold rounded-xl shadow-md hover:bg-blue-700 transition-colors"
                       >

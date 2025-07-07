@@ -7,6 +7,7 @@ import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import HotelPage from './pages/HotelPage';
+import HotelDetailsPage from './pages/HotelDetailsPage';
 import AboutUs from './pages/AboutUs';
 import BookingPage from './pages/BookingPage';
 import SearchResultsPage from './pages/SearchResultsPage';
@@ -43,9 +44,21 @@ const App = () => {
             </ProtectedRoute>
           } />
 
+          <Route path="/hotel/:hotelName/details" element={
+            <ProtectedRoute>
+              <HotelDetailsPage />
+            </ProtectedRoute>
+          } />
+
           <Route path="/aboutus" element={<AboutUs />} />
 
           <Route path="/bookingpage/:hotelId" element={
+            <ProtectedRoute>
+              <BookingPage />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/booking/:hotelName" element={
             <ProtectedRoute>
               <BookingPage />
             </ProtectedRoute>
