@@ -56,11 +56,10 @@ export const AuthProvider = ({ children }) => {
         await checkAuthStatus();
         return { success: true };
       } else {
-        const errorData = await response.json();
-        return { success: false, error: errorData.message || 'Login failed' };
+        return { success: false, error: 'Invalid credentials' };
       }
     } catch (error) {
-      return { success: false, error: error.message };
+      return { success: false, error: 'Invalid credentials' };
     }
   };
 

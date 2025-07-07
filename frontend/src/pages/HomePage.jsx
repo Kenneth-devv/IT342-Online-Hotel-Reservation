@@ -510,7 +510,7 @@ const HomePage = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             <div className="bg-white rounded-3xl shadow-lg p-8 border border-gray-100">
               <p className="text-lg text-gray-700 italic mb-6">
-                "Booking my vacation through Bright Hotel was incredibly easy and stress-free. The selection was vast, and I found the perfect hotel for my family. Highly recommend!"
+                "Booking my vacation through ReserveEase was incredibly easy and stress-free. The selection was vast, and I found the perfect hotel for my family. Highly recommend!"
               </p>
               <div className="flex items-center">
                 <img src="https://placehold.co/60x60/D1D5DB/FFFFFF?text=JD" alt="John Doe" className="w-16 h-16 rounded-full mr-4 object-cover" />
@@ -522,7 +522,7 @@ const HomePage = () => {
             </div>
             <div className="bg-white rounded-3xl shadow-lg p-8 border border-gray-100">
               <p className="text-lg text-gray-700 italic mb-6">
-                "The customer service was exceptional. I had a last-minute change to my reservation, and the team handled it swiftly and professionally. Thank you, Bright Hotel!"
+                "The customer service was exceptional. I had a last-minute change to my reservation, and the team handled it swiftly and professionally. Thank you, ReserveEase!"
               </p>
               <div className="flex items-center">
                 <img src="https://placehold.co/60x60/D1D5DB/FFFFFF?text=AS" alt="Jane Smith" className="w-16 h-16 rounded-full mr-4 object-cover" />
@@ -554,8 +554,8 @@ const HomePage = () => {
         <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand Info */}
           <div>
-            <span className="text-2xl font-bold text-white">Bright Hotel</span>
-            <p className="text-sm mt-2">Your ultimate partner in finding the perfect hotel for every journey.</p>
+                      <span className="text-2xl font-bold text-white">ReserveEase</span>
+          <p className="text-sm mt-2">Your ultimate partner in finding the perfect hotel for every journey.</p>
           </div>
 
           {/* Quick Links */}
@@ -593,7 +593,7 @@ const HomePage = () => {
           </div>
         </div>
         <div className="border-t border-gray-700 mt-8 pt-8 text-center text-sm text-gray-500">
-          &copy; {new Date().getFullYear()} Bright Hotel. All rights reserved.
+          &copy; {new Date().getFullYear()} ReserveEase. All rights reserved.
         </div>
       </footer>
     </div>

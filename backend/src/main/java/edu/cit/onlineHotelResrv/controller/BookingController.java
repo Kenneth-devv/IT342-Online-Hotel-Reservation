@@ -60,7 +60,7 @@ public class BookingController {
             Booking booking = new Booking();
             booking.setUser(user);
             booking.setHotelId(request.getHotelId());
-            booking.setHotelName(request.getHotelName());
+            booking.setHotelName(getHotelNameById(request.getHotelId()));
             booking.setCheckInDate(request.getCheckIn());
             booking.setCheckOutDate(request.getCheckOut());
             booking.setGuestFirstName(request.getGuestDetails().getFirstName());
@@ -253,6 +253,24 @@ public class BookingController {
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    // Helper method to get the correct hotel name based on hotel ID
+    private String getHotelNameById(Long hotelId) {
+        if (hotelId == null) {
+            return "Unknown Hotel";
+        }
+        
+        switch (hotelId.intValue()) {
+            case 1:
+                return "Grand Hyatt Manila";
+            case 3:
+                return "Shangri-La at the Fort";
+            case 5:
+                return "Luxurious Grand Hotel Cebu";
+            default:
+                return "Hotel " + hotelId;
         }
     }
 } 

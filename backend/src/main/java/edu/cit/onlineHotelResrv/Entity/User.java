@@ -30,6 +30,9 @@ public class User {
     @Column(nullable = false)
     private String phone;
 
+    @Column(name = "hotel_id")
+    private Long hotelId;
+
     private boolean enabled;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -94,6 +97,14 @@ public class User {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public Long getHotelId() {
+        return hotelId;
+    }
+
+    public void setHotelId(Long hotelId) {
+        this.hotelId = hotelId;
     }
 
     public boolean isEnabled() {

@@ -1,6 +1,7 @@
 package edu.cit.onlineHotelResrv.repository;
 
 import edu.cit.onlineHotelResrv.Entity.Booking;
+import edu.cit.onlineHotelResrv.Entity.BookingStatus;
 import edu.cit.onlineHotelResrv.Entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -39,4 +40,16 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     
     @Query("SELECT b FROM Booking b WHERE b.createdAt >= :startDate ORDER BY b.createdAt DESC")
     List<Booking> findRecentBookings(@Param("startDate") java.time.LocalDateTime startDate);
+    
+    List<Booking> findAllByOrderByCreatedAtDesc();
+    
+    List<Booking> findByCheckOutDateGreaterThanEqualOrderByCheckInDateAsc(LocalDate date);
+    
+    List<Booking> findByCheckOutDateLessThanOrderByCheckOutDateDesc(LocalDate date);
+    
+    List<Booking> findByHotelIdAndCheckOutDateGreaterThanEqualOrderByCheckInDateAsc(Long hotelId, LocalDate date);
+    
+    List<Booking> findByHotelIdAndCheckOutDateLessThanOrderByCheckOutDateDesc(Long hotelId, LocalDate date);
+    
+    List<Booking> findByHotelIdAndStatusOrderByCreatedAtDesc(Long hotelId, BookingStatus status);
 } 

@@ -106,6 +106,25 @@ const AdminDashboard = () => {
     setShowRoleModal(true);
   };
 
+  const updateHotelNames = async () => {
+    try {
+      const response = await fetch('http://localhost:8080/api/hotel-manager/update-hotel-names', {
+        method: 'PUT',
+        credentials: 'include'
+      });
+
+      if (response.ok) {
+        const result = await response.text();
+        alert(result);
+      } else {
+        alert('Failed to update hotel names');
+      }
+    } catch (error) {
+      console.error('Error updating hotel names:', error);
+      alert('Error updating hotel names');
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -140,9 +159,9 @@ const AdminDashboard = () => {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Search Bar */}
-        <div className="mb-8">
-          <div className="relative">
+        {/* Search Bar and Actions */}
+        <div className="mb-8 flex justify-between items-center">
+          <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
             <input
               type="text"
@@ -152,6 +171,12 @@ const AdminDashboard = () => {
               className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
+          <button
+            onClick={updateHotelNames}
+            className="ml-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Update Hotel Names
+          </button>
         </div>
 
         {/* Users Table */}
