@@ -123,10 +123,10 @@ const LoginPage = () => {
           )}
           
           <div className="space-y-6">
-            {/* Username Input Field (changed from email) */}
+            {/* Email Address input field */}
             <div>
               <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
-                Username
+                Email Address
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -141,7 +141,7 @@ const LoginPage = () => {
                   className={`block w-full pl-10 pr-3 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors text-gray-900 ${
                     errors.username ? 'border-red-300 bg-red-50' : 'border-gray-200 bg-white/50'
                   }`}
-                  placeholder="Enter your username"
+                  placeholder="Enter your Email Address"
                 />
               </div>
               {errors.username && (
