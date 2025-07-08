@@ -17,6 +17,8 @@ const HotelManagerDashboard = () => {
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showStatusModal, setShowStatusModal] = useState(false);
+  const [showImageModal, setShowImageModal] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState('');
   const [newStatus, setNewStatus] = useState('');
   const [hotelInfo, setHotelInfo] = useState({ hotelId: null, hotelName: 'Loading...' });
@@ -178,6 +180,16 @@ const HotelManagerDashboard = () => {
     return activeTab === 'current' ? currentBookings : pastBookings;
   };
 
+  const handleImageClick = (imageSrc) => {
+    setSelectedImage(imageSrc);
+    setShowImageModal(true);
+  };
+
+  const closeImageModal = () => {
+    setShowImageModal(false);
+    setSelectedImage(null);
+  };
+
   const stats = {
     total: bookings.length,
     current: currentBookings.length,
@@ -325,6 +337,9 @@ const HotelManagerDashboard = () => {
                         Amount
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Payment Proof
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Status
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -367,11 +382,23 @@ const HotelManagerDashboard = () => {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm font-medium text-gray-900">
-                            ₱{booking.totalAmount.toLocaleString()}
+                            ₱{booking.totalAmount ? booking.totalAmount.toLocaleString() : '0'}
                           </div>
                           <div className="text-sm text-gray-500">
                             {booking.paymentMode || 'Not specified'}
                           </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {booking.paymentMode === 'GCash' && booking.paymentProof ? (
+                            <img 
+                              src={booking.paymentProof} 
+                              alt="Payment Proof" 
+                              style={{ width: 80, height: 'auto', borderRadius: 8, border: '1px solid #eee', cursor: 'pointer' }} 
+                              onClick={() => handleImageClick(booking.paymentProof)} 
+                            />
+                          ) : (
+                            <span className="text-xs text-gray-400">N/A</span>
+                          )}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(booking.status)}`}>
@@ -450,7 +477,7 @@ const HotelManagerDashboard = () => {
               <h3 className="text-lg font-medium text-gray-900 mb-4">Confirm Payment</h3>
               <div className="mb-4">
                 <p className="text-sm text-gray-600 mb-2">Booking: #{selectedBooking.bookingCode}</p>
-                <p className="text-sm text-gray-600 mb-2">Amount: ₱{selectedBooking.totalAmount.toLocaleString()}</p>
+                <p className="text-sm text-gray-600 mb-2">Amount: ₱{selectedBooking.totalAmount ? selectedBooking.totalAmount.toLocaleString() : '0'}</p>
                 <p className="text-sm text-gray-600 mb-4">Guest: {selectedBooking.guestFirstName} {selectedBooking.guestLastName}</p>
                 
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -528,6 +555,23 @@ const HotelManagerDashboard = () => {
                   Update Status
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Image Modal */}
+      {showImageModal && selectedImage && (
+        <div className="fixed inset-0 bg-gray-900 bg-opacity-75 overflow-y-auto h-full w-full z-50 flex items-center justify-center">
+          <div className="bg-white rounded-lg shadow-xl max-w-4xl max-h-full">
+            <div className="relative p-6">
+              <button
+                onClick={closeImageModal}
+                className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+              >
+                <XCircle className="w-6 h-6" />
+              </button>
+              <img src={selectedImage} alt="Payment Proof" className="max-w-full max-h-full" />
             </div>
           </div>
         </div>

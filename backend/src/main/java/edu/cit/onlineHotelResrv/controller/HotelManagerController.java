@@ -68,9 +68,12 @@ public class HotelManagerController {
                         booking.getNumberOfRooms(),
                         booking.getTotalAmount(),
                         booking.getPaymentMode(),
+                        booking.getPaymentProof(),
+                        booking.getPaymentStatus(),
                         booking.getSpecialRequests(),
                         booking.getStatus().toString(),
-                        booking.getCreatedAt()
+                        booking.getCreatedAt(),
+                        booking.getRoomType()
                     ))
                     .collect(Collectors.toList());
 
@@ -124,9 +127,12 @@ public class HotelManagerController {
                         booking.getNumberOfRooms(),
                         booking.getTotalAmount(),
                         booking.getPaymentMode(),
+                        booking.getPaymentProof(),
+                        booking.getPaymentStatus(),
                         booking.getSpecialRequests(),
                         booking.getStatus().toString(),
-                        booking.getCreatedAt()
+                        booking.getCreatedAt(),
+                        booking.getRoomType()
                     ))
                     .collect(Collectors.toList());
 
@@ -187,9 +193,12 @@ public class HotelManagerController {
                         booking.getNumberOfRooms(),
                         booking.getTotalAmount(),
                         booking.getPaymentMode(),
+                        booking.getPaymentProof(),
+                        booking.getPaymentStatus(),
                         booking.getSpecialRequests(),
                         booking.getStatus().toString(),
-                        booking.getCreatedAt()
+                        booking.getCreatedAt(),
+                        booking.getRoomType()
                     ))
                     .collect(Collectors.toList());
 
@@ -237,9 +246,12 @@ public class HotelManagerController {
                 updatedBooking.getNumberOfRooms(),
                 updatedBooking.getTotalAmount(),
                 updatedBooking.getPaymentMode(),
+                updatedBooking.getPaymentProof(),
+                updatedBooking.getPaymentStatus(),
                 updatedBooking.getSpecialRequests(),
                 updatedBooking.getStatus().toString(),
-                updatedBooking.getCreatedAt()
+                updatedBooking.getCreatedAt(),
+                updatedBooking.getRoomType()
             );
 
             return ResponseEntity.ok(response);
@@ -288,9 +300,12 @@ public class HotelManagerController {
                 updatedBooking.getNumberOfRooms(),
                 updatedBooking.getTotalAmount(),
                 updatedBooking.getPaymentMode(),
+                updatedBooking.getPaymentProof(),
+                updatedBooking.getPaymentStatus(),
                 updatedBooking.getSpecialRequests(),
                 updatedBooking.getStatus().toString(),
-                updatedBooking.getCreatedAt()
+                updatedBooking.getCreatedAt(),
+                updatedBooking.getRoomType()
             );
 
             return ResponseEntity.ok(response);

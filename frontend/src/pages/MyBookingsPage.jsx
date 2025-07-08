@@ -278,7 +278,7 @@ const MyBookingsPage = () => {
                         </p>
                       </div>
                       <div className="text-right">
-                        <p className="text-2xl font-bold text-gray-900">₱{booking.totalAmount.toLocaleString()}</p>
+                        <p className="text-2xl font-bold text-gray-900">₱{booking.totalAmount ? booking.totalAmount.toLocaleString() : '0'}</p>
                         <p className="text-sm text-gray-500">{booking.numberOfGuests} guest{booking.numberOfGuests !== 1 ? 's' : ''}, {booking.numberOfRooms} room{booking.numberOfRooms !== 1 ? 's' : ''}</p>
                       </div>
                     </div>

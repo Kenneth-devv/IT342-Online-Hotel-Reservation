@@ -15,7 +15,7 @@ export const AuthRoute = ({ children }) => {
   }
 
   if (isAuthenticated) {
-    return <Navigate to="/hotelpage" replace />;
+    return <Navigate to="/" replace />;
   }
 
   return children;

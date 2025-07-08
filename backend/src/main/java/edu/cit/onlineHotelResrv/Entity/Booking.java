@@ -55,8 +55,18 @@ public class Booking {
     @Column(name = "payment_mode")
     private String paymentMode;
     
+    @Lob
+    @Column(name = "payment_proof", columnDefinition = "LONGTEXT")
+    private String paymentProof;
+    
+    @Column(name = "payment_status")
+    private String paymentStatus;
+    
     @Column(name = "special_requests")
     private String specialRequests;
+    
+    @Column(name = "room_type", nullable = false)
+    private String roomType;
     
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
@@ -192,12 +202,35 @@ public class Booking {
         this.paymentMode = paymentMode;
     }
     
+    public String getPaymentProof() {
+        return paymentProof;
+    }
+    
+    public void setPaymentProof(String paymentProof) {
+        this.paymentProof = paymentProof;
+    }
+    
+    public String getPaymentStatus() {
+        return paymentStatus;
+    }
+    
+    public void setPaymentStatus(String paymentStatus) {
+        this.paymentStatus = paymentStatus;
+    }
+    
     public String getSpecialRequests() {
         return specialRequests;
     }
     
     public void setSpecialRequests(String specialRequests) {
         this.specialRequests = specialRequests;
+    }
+    
+    public String getRoomType() {
+        return roomType;
+    }
+    public void setRoomType(String roomType) {
+        this.roomType = roomType;
     }
     
     public BookingStatus getStatus() {

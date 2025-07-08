@@ -334,7 +334,9 @@ const HotelDetailsPage = () => {
                 <span className="block text-sm text-gray-600">Guest Rating</span>
               </div>
               <div className="text-center">
-                <span className="block text-2xl font-semibold text-gray-800">{hotelData.reviews.toLocaleString()}</span>
+                <span className="block text-2xl font-semibold text-gray-800">
+                  {hotelData.reviews ? hotelData.reviews.toLocaleString() : '0'}
+                </span>
                 <span className="block text-sm text-gray-600">Reviews</span>
               </div>
             </div>
@@ -395,7 +397,7 @@ const HotelDetailsPage = () => {
                       </div>
                       <div className="text-right">
                         <div className="text-3xl font-bold text-blue-600">
-                          ₱{room.price.toLocaleString()}
+                          ₱{room.price ? room.price.toLocaleString() : 'N/A'}
                         </div>
                         <div className="text-sm text-gray-500">per night</div>
                       </div>

@@ -18,11 +18,14 @@ public class BookingResponse {
     private Integer numberOfRooms;
     private Double totalAmount;
     private String paymentMode;
+    private String paymentProof;
+    private String paymentStatus;
     private String specialRequests;
     private String status;
     private LocalDateTime createdAt;
     private String message;
     private boolean success;
+    private String roomType;
 
     public BookingResponse() {}
 
@@ -30,7 +33,7 @@ public class BookingResponse {
                          LocalDate checkOutDate, String guestFirstName, String guestLastName,
                          String guestEmail, String guestPhone, Integer numberOfGuests,
                          Integer numberOfRooms, Double totalAmount, String paymentMode,
-                         String specialRequests, String status, LocalDateTime createdAt) {
+                         String paymentProof, String paymentStatus, String specialRequests, String status, LocalDateTime createdAt, String roomType) {
         this.id = id;
         this.bookingCode = bookingCode;
         this.hotelId = hotelId;
@@ -45,9 +48,12 @@ public class BookingResponse {
         this.numberOfRooms = numberOfRooms;
         this.totalAmount = totalAmount;
         this.paymentMode = paymentMode;
+        this.paymentProof = paymentProof;
+        this.paymentStatus = paymentStatus;
         this.specialRequests = specialRequests;
         this.status = status;
         this.createdAt = createdAt;
+        this.roomType = roomType;
         this.success = true;
         this.message = "Booking created successfully";
     }
@@ -157,10 +163,26 @@ public class BookingResponse {
         return paymentMode;
     }
 
-    public void setPaymentMode(String paymentMode) {
+        public void setPaymentMode(String paymentMode) {
         this.paymentMode = paymentMode;
     }
-
+    
+    public String getPaymentProof() {
+        return paymentProof;
+    }
+    
+    public void setPaymentProof(String paymentProof) {
+        this.paymentProof = paymentProof;
+    }
+    
+    public String getPaymentStatus() {
+        return paymentStatus;
+    }
+    
+    public void setPaymentStatus(String paymentStatus) {
+        this.paymentStatus = paymentStatus;
+    }
+    
     public String getSpecialRequests() {
         return specialRequests;
     }
@@ -207,5 +229,12 @@ public class BookingResponse {
     
     public void setBookingCode(String bookingCode) {
         this.bookingCode = bookingCode;
+    }
+
+    public String getRoomType() {
+        return roomType;
+    }
+    public void setRoomType(String roomType) {
+        this.roomType = roomType;
     }
 } 

@@ -2,6 +2,7 @@ import React, { useState } from 'react'; // Removed extra '=>'
 // Import additional icons for First Name, Last Name, and Phone
 import { Mail, Lock, Eye, EyeOff, UserPlus, ArrowRight, User, Phone } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const SignupPage = () => {
   const navigate = useNavigate();
