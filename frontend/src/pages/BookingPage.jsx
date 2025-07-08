@@ -66,6 +66,10 @@ const BookingPage = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [bookingConfirmed, setBookingConfirmed] = useState(false);
+  const [paymentMode, setPaymentMode] = useState('Cash');
+  const [showGCashQR, setShowGCashQR] = useState(false);
+  const [paymentProof, setPaymentProof] = useState(null);
+  const [paymentProofPreview, setPaymentProofPreview] = useState(null);
 
   // Auto-populate or clear guest information based on booking selection
   useEffect(() => {
@@ -102,6 +106,23 @@ const BookingPage = () => {
     }));
   };
 
+  const handlePaymentModeChange = (e) => {
+    setPaymentMode(e.target.value);
+    setShowGCashQR(e.target.value === 'GCash');
+  };
+
+  const handlePaymentProofChange = (e) => {
+    const file = e.target.files[0];
+    setPaymentProof(file);
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => setPaymentProofPreview(reader.result);
+      reader.readAsDataURL(file);
+    } else {
+      setPaymentProofPreview(null);
+    }
+  };
+
   const calculateNights = () => {
     if (bookingData.checkIn && bookingData.checkOut) {
       const checkIn = new Date(bookingData.checkIn);
@@ -123,6 +144,12 @@ const BookingPage = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
+    let paymentProofUrl = null;
+    if (paymentMode === 'GCash' && paymentProof) {
+      // Simulate upload, in real app use a backend endpoint for file upload
+      paymentProofUrl = paymentProofPreview; // For demo, just use base64
+    }
+
     const requestBody = {
       hotelId: selectedHotel.id,
       hotelName: selectedHotel.name,
@@ -138,7 +165,8 @@ const BookingPage = () => {
       },
       numberOfGuests: bookingData.guests,
       numberOfRooms: bookingData.rooms,
-      paymentMode: "Cash",
+      paymentMode: paymentMode,
+      paymentProof: paymentProofUrl,
       specialRequests: bookingData.specialRequests,
       totalAmount: calculateTotal()
     };
@@ -186,7 +214,7 @@ const BookingPage = () => {
             <p><strong>Guest:</strong> {bookingData.firstName} {bookingData.lastName}</p>
             <p><strong>Check-in:</strong> {bookingData.checkIn}</p>
             <p><strong>Check-out:</strong> {bookingData.checkOut}</p>
-            <p><strong>Total:</strong> ₱{calculateTotal().toLocaleString()}</p>
+            <p><strong>Total:</strong> ₱{calculateTotal() ? calculateTotal().toLocaleString() : '0'}</p>
           </div>
                       <div className="confirmation-actions">
               <button onClick={() => navigate('/')} className="primary-btn">
@@ -234,7 +262,7 @@ const BookingPage = () => {
             </div>
             
             <div className="hotel-price-display">
-              <span className="price">₱{(selectedRoom.price || selectedHotel.pricePerNight || 9500).toLocaleString()}</span>
+              <span className="price">₱{(selectedRoom.price || selectedHotel.pricePerNight || 9500) ? (selectedRoom.price || selectedHotel.pricePerNight || 9500).toLocaleString() : 'N/A'}</span>
               <span className="per-night">per night</span>
             </div>
             
@@ -418,6 +446,59 @@ const BookingPage = () => {
               </div>
             </div>
 
+            <div className="form-section">
+              <h3>Payment Method</h3>
+              <div className="form-group">
+                <label>
+                  <input
+                    type="radio"
+                    name="paymentMode"
+                    value="Cash"
+                    checked={paymentMode === 'Cash'}
+                    onChange={handlePaymentModeChange}
+                  />
+                  Pay with Cash (at hotel)
+                </label>
+                <label style={{ marginLeft: '2em' }}>
+                  <input
+                    type="radio"
+                    name="paymentMode"
+                    value="GCash"
+                    checked={paymentMode === 'GCash'}
+                    onChange={handlePaymentModeChange}
+                  />
+                  Pay with GCash
+                </label>
+              </div>
+              {showGCashQR && (
+                <div className="gcash-section">
+                  <div style={{ margin: '1em 0' }}>
+                    <strong>Scan this QR code to pay with GCash:</strong>
+                    <div>
+                      <img src="/gcash-qr-demo.jpg" alt="GCash QR Code" style={{ width: 400, height: 400, margin: '1em 0' }} />
+                    </div>
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="paymentProof">Upload GCash Payment Screenshot *</label>
+                    <input
+                      type="file"
+                      id="paymentProof"
+                      name="paymentProof"
+                      accept="image/*"
+                      onChange={handlePaymentProofChange}
+                      required={paymentMode === 'GCash'}
+                    />
+                    {paymentProofPreview && (
+                      <div style={{ marginTop: '1em' }}>
+                        <strong>Preview:</strong>
+                        <img src={paymentProofPreview} alt="Payment Proof Preview" style={{ width: 200, height: 'auto', marginTop: 8 }} />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
             {/* Booking Summary */}
             <div className="booking-summary">
               <h3>Booking Summary</h3>
@@ -455,7 +536,7 @@ const BookingPage = () => {
               </div>
               <div className="summary-row total">
                 <span>Total Amount:</span>
-                <span>₱{calculateTotal().toLocaleString()}</span>
+                <span>₱{calculateTotal() ? calculateTotal().toLocaleString() : '0'}</span>
               </div>
             </div>
 
@@ -472,7 +553,7 @@ const BookingPage = () => {
                 className="primary-btn"
                 disabled={isSubmitting || calculateNights() <= 0}
               >
-                {isSubmitting ? 'Processing...' : `Book Now - ₱${calculateTotal().toLocaleString()}`}
+                {isSubmitting ? 'Processing...' : `Book Now - ₱${calculateTotal() ? calculateTotal().toLocaleString() : '0'}`}
               </button>
             </div>
           </form>

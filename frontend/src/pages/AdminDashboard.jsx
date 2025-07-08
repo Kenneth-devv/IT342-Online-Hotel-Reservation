@@ -17,7 +17,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     // Check if user is admin
     if (!user || (!user.roles.includes('ADMIN') && !user.roles.includes('ROLE_ADMIN'))) {
-      navigate('/hotelpage');
+      navigate('/');
       return;
     }
 

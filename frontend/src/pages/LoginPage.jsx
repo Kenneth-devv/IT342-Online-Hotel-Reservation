@@ -74,8 +74,8 @@ const LoginPage = () => {
           // Redirect all users to home page after login
           navigate('/');
         } else {
-          // Fallback to hotel page if we can't determine role
-          navigate('/hotelpage');
+          // Fallback to home page if we can't determine role
+          navigate('/');
         }
       } else {
         setErrors(prev => ({ ...prev, general: result.error }));
